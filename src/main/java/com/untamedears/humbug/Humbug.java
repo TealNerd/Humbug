@@ -14,8 +14,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_7_R4.EntityTypes;
-import net.minecraft.server.v1_7_R4.Item;
+import net.minecraft.server.v1_8_R2.EntityTypes;
+import net.minecraft.server.v1_8_R2.Item;
+import net.minecraft.server.v1_8_R2.MinecraftKey;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -2062,7 +2063,8 @@ public class Humbug extends JavaPlugin implements Listener {
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @BahHumbug(opt="ender_pearl_gravity", type=OptType.Double, def="0.060000")
   public void hookEnderPearls() {
-    Item.REGISTRY.a(256 + 112, "enderPearl", new CustomNMSItemEnderPearl(config_));
+	MinecraftKey key = new MinecraftKey("enderPearl");
+    Item.REGISTRY.a(256 + 112, key, new CustomNMSItemEnderPearl(config_));
     try {
       // They thought they could stop us by preventing us from registering an
       // item. We'll show them

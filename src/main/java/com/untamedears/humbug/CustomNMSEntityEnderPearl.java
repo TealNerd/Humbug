@@ -1,9 +1,9 @@
 package com.untamedears.humbug;
 
-import net.minecraft.server.v1_7_R4.EntityEnderPearl;
-import net.minecraft.server.v1_7_R4.EntityLiving;
-import net.minecraft.server.v1_7_R4.NBTTagCompound;
-import net.minecraft.server.v1_7_R4.World;
+import net.minecraft.server.v1_8_R2.EntityEnderPearl;
+import net.minecraft.server.v1_8_R2.EntityLiving;
+import net.minecraft.server.v1_8_R2.NBTTagCompound;
+import net.minecraft.server.v1_8_R2.World;
 import org.bukkit.Bukkit;
 
 public class CustomNMSEntityEnderPearl extends EntityEnderPearl {
@@ -27,11 +27,13 @@ public class CustomNMSEntityEnderPearl extends EntityEnderPearl {
     y_adjust_ = gravity;
   }
 
-  protected float i() {
+  @Override
+  protected float m() {
     return (float)y_adjust_;
   }
 
-  public void h() {
+  @Override
+  public void t_() {
     super.h();
     if (tick_==0) {
       startDeltaX_ = motX;
@@ -46,11 +48,11 @@ public class CustomNMSEntityEnderPearl extends EntityEnderPearl {
 
 
     double x = startDeltaX_ * tick_ + startX_;
-    double y = e() / -2.0F * (float)tick_ * (float)tick_ + startDeltaY_ * tick_ + startY_;
+    double y = j() / -2.0F * (float)tick_ * (float)tick_ + startDeltaY_ * tick_ + startY_;
     double z = startDeltaZ_ * tick_ + startZ_;
 
     motX = startDeltaX_;
-    motY = (-e() * (float)tick_ + startDeltaY_);
+    motY = (-j() * (float)tick_ + startDeltaY_);
     motZ = startDeltaZ_;
 
     super.setPosition(x, y, z);
@@ -61,6 +63,7 @@ public class CustomNMSEntityEnderPearl extends EntityEnderPearl {
     return tick_;
   }
 
+  @Override
   public void b(NBTTagCompound nbttagcompound) {
     EnderPearlUnloadEvent event = new EnderPearlUnloadEvent(getBukkitEntity());
     Bukkit.getServer().getPluginManager().callEvent(event);
@@ -82,6 +85,8 @@ public class CustomNMSEntityEnderPearl extends EntityEnderPearl {
     nbttagcompound.setDouble("HumbugStartDeltaY", startDeltaY_);
     nbttagcompound.setDouble("HumbugStartDeltaZ", startDeltaZ_);
   }
+  
+  @Override
   public void a(NBTTagCompound nbttagcompound) {
     EnderPearlLoadEvent event = new EnderPearlLoadEvent(getBukkitEntity());
     Bukkit.getServer().getPluginManager().callEvent(event);
