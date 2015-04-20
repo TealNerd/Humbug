@@ -2,6 +2,7 @@ package com.untamedears.humbug;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -2090,16 +2091,47 @@ public class Humbug extends JavaPlugin implements Listener {
       mapClassToString.put(CustomNMSEntityEnderPearl.class, "ThrownEnderpearl");
       mapClassToId.put(CustomNMSEntityEnderPearl.class, Integer.valueOf(14));
       
-      fieldStringToClass.set(null, mapStringToClass);
-      fieldClassToString.set(null, mapClassToString);
+      //fieldStringToClass.set(null, mapStringToClass);
+      setFinalStatic(fieldStringToClass, mapStringToClass, null);
+      //fieldClassToString.set(null, mapClassToString);
+      setFinalStatic(fieldClassToString, mapClassToString, null);
       
-      fieldClassToId.set(null, mapClassToId);
-      fieldStringToId.set(null, mapStringToId);
+      //fieldClassToId.set(null, mapClassToId);
+      setFinalStatic(fieldClassToId, mapClassToId, null);
+      //fieldStringToId.set(null, mapStringToId);
+      setFinalStatic(fieldStringToId, mapStringToId, null);
     } catch (Exception e) {
       Humbug.severe("Exception while overriding MC's ender pearl class");
       e.printStackTrace();
     }
   }
+  
+  private void setFinalStatic(Field field, Object newValue, Object obj) {
+		try {
+			field.setAccessible(true);
+
+			// remove final modifier from field
+			Field modifiersField;
+			modifiersField = Field.class.getDeclaredField("modifiers");
+			modifiersField.setAccessible(true);
+			modifiersField
+					.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+			field.set(obj, newValue);
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
   // ================================================
   // Hunger Changes
