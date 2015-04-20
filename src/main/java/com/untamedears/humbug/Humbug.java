@@ -2079,11 +2079,11 @@ public class Humbug extends JavaPlugin implements Listener {
       fieldClassToId.setAccessible(true);
       fieldStringToId.setAccessible(true);
       
-      Map mapStringToClass = (Map)fieldStringToClass.get(null);
-      Map mapClassToString = (Map)fieldClassToString.get(null);
+      HashMap mapStringToClass = (HashMap)fieldStringToClass.get(null);
+      HashMap mapClassToString = (HashMap)fieldClassToString.get(null);
       
-      Map mapClassToId = (Map)fieldClassToId.get(null);
-      Map mapStringToId = (Map)fieldStringToId.get(null);
+      HashMap mapClassToId = (HashMap)fieldClassToId.get(null);
+      HashMap mapStringToId = (HashMap)fieldStringToId.get(null);
       
       mapStringToClass.put("ThrownEnderpearl",CustomNMSEntityEnderPearl.class);
       mapStringToId.put("ThrownEnderpearl", Integer.valueOf(14));
