@@ -467,16 +467,16 @@ public class Humbug extends JavaPlugin implements Listener {
 
   @BahHumbug(opt="enchanting_table", def = "false")
   public void onEnchantingTableUse(PlayerInteractEvent event) {
-	  if(!config_.get("enchanting_table").getBool()) {
-		  return;
-	  }
-	  Action action = event.getAction();
-	  Material material = event.getClickedBlock().getType();
-	  boolean enchanting_table = action == Action.RIGHT_CLICK_BLOCK &&
-			  					 material.equals(Material.ENCHANTMENT_TABLE);
-	  if(enchanting_table) {
-		  event.setCancelled(true);
-	  }
+    if(!config_.get("enchanting_table").getBool()) {
+      return;
+    }
+    Action action = event.getAction();
+    Material material = event.getClickedBlock().getType();
+    boolean enchanting_table = action == Action.RIGHT_CLICK_BLOCK &&
+                   material.equals(Material.ENCHANTMENT_TABLE);
+    if(enchanting_table) {
+      event.setCancelled(true);
+    }
   }
   
   @BahHumbug(opt="ender_chests_placeable", def="true")
@@ -860,32 +860,31 @@ public class Humbug extends JavaPlugin implements Listener {
     }
     //set entity death xp to zero so they don't drop orbs
     if(config_.get("disable_xp_orbs").getBool()){
-    	event.setDroppedExp(0);
+      event.setDroppedExp(0);
     }
     //if a dropped item was in the mob's inventory, drop only one, otherwise drop the amount * the multiplier
     LivingEntity liveMob = (LivingEntity) mob;
     EntityEquipment mobEquipment = liveMob.getEquipment();
     ItemStack[] eeItem = mobEquipment.getArmorContents();
     for (ItemStack item : event.getDrops()) {
-    	boolean armor = false;
-    	boolean hand = false;
-    	for(ItemStack i : eeItem){
-    		if(i.isSimilar(item)){
-    			armor = true;
-    			item.setAmount(1);
-    		}
-    	}
-		if(item.isSimilar(mobEquipment.getItemInHand())){
-    		hand = true;
-    		item.setAmount(1);
-    	}
-    	if(!hand && !armor){
-    		int amount = item.getAmount() * multiplier;
-        	item.setAmount(amount);
-    	}	
-    }    
+      boolean armor = false;
+      boolean hand = false;
+      for(ItemStack i : eeItem){
+        if(i.isSimilar(item)){
+          armor = true;
+          item.setAmount(1);
+        }
+      }
+      if(item.isSimilar(mobEquipment.getItemInHand())){
+        hand = true;
+        item.setAmount(1);
+      }
+      if(!hand && !armor){
+        int amount = item.getAmount() * multiplier;
+          item.setAmount(amount);
+      }
+    }
   }
-  
 
   @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
   public void onEntityDeathEvent(EntityDeathEvent event) {
@@ -965,7 +964,7 @@ public class Humbug extends JavaPlugin implements Listener {
   @BahHumbug(opt="disable_entities_portal", type = OptType.Bool, def = "true")
   @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
   public void entityPortalEvent(EntityPortalEvent event){
-	  event.setCancelled(config_.get("disable_entities_portal").getBool());
+    event.setCancelled(config_.get("disable_entities_portal").getBool());
   }
   //=================================================
   // Enchanted Book
@@ -1157,17 +1156,19 @@ public class Humbug extends JavaPlugin implements Listener {
   // Fix dupe bug with chests and other containers
   
   @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
-  public void blockExplodeEvent(EntityExplodeEvent event){
-	  List<HumanEntity> humans = new ArrayList<HumanEntity>();
-	  for (Block block: event.blockList()){
-		  if (block.getState() instanceof InventoryHolder){
-			  InventoryHolder holder = (InventoryHolder) block.getState();
-			  for (HumanEntity ent: holder.getInventory().getViewers())
-				  humans.add(ent);
-		  }
-	  }
-	  for (HumanEntity human: humans)
-		  human.closeInventory();
+  public void blockExplodeEvent(EntityExplodeEvent event) {
+    List<HumanEntity> humans = new ArrayList<HumanEntity>();
+    for (Block block: event.blockList()) {
+      if (block.getState() instanceof InventoryHolder) {
+        InventoryHolder holder = (InventoryHolder) block.getState();
+        for (HumanEntity ent: holder.getInventory().getViewers()) {
+          humans.add(ent);
+        }
+      }
+    }
+    for (HumanEntity human: humans) {
+      human.closeInventory();
+    }
   }
   
   // ==================================================
@@ -1458,30 +1459,30 @@ public class Humbug extends JavaPlugin implements Listener {
       }
     }
     if(!e.isCancelled() && config_.get("obsidian_generator").getBool()) {
-    	generateObsidian(e);
+      generateObsidian(e);
     }
   }
 
-  //generates obsidian like it did in 1.7
-  //note that this does not change anything in versions where obsidian generation exists
+  // Generates obsidian like it did in 1.7.
+  // Note that this does not change anything in versions where obsidian generation exists.
   @BahHumbug(opt="obsidian_generator", def="false")
   public void generateObsidian(BlockFromToEvent event) {
-	if(!event.getBlock().getType().equals(Material.STATIONARY_LAVA)) {
-		return;
-	}
-	if(!event.getToBlock().getType().equals(Material.TRIPWIRE)) {
-		return;
-	}
-	Block string = event.getToBlock();
-	if(!(string.getRelative(BlockFace.NORTH).getType().equals(Material.STATIONARY_WATER)
-		|| string.getRelative(BlockFace.EAST).getType().equals(Material.STATIONARY_WATER)
-		|| string.getRelative(BlockFace.WEST).getType().equals(Material.STATIONARY_WATER)
-		||	string.getRelative(BlockFace.SOUTH).getType().equals(Material.STATIONARY_WATER))) {
-		return;
-	}
-	string.setType(Material.OBSIDIAN);
+    if(!event.getBlock().getType().equals(Material.STATIONARY_LAVA)) {
+      return;
+    }
+    if(!event.getToBlock().getType().equals(Material.TRIPWIRE)) {
+      return;
+    }
+    Block string = event.getToBlock();
+    if(!(string.getRelative(BlockFace.NORTH).getType().equals(Material.STATIONARY_WATER)
+          || string.getRelative(BlockFace.EAST).getType().equals(Material.STATIONARY_WATER)
+          || string.getRelative(BlockFace.WEST).getType().equals(Material.STATIONARY_WATER)
+          ||  string.getRelative(BlockFace.SOUTH).getType().equals(Material.STATIONARY_WATER))) {
+      return;
+    }
+    string.setType(Material.OBSIDIAN);
   }
-	
+
   //=================================================
   // Stops perculators
   private Map<Chunk, Integer> waterChunks = new HashMap<Chunk, Integer>();
@@ -1493,58 +1494,56 @@ public class Humbug extends JavaPlugin implements Listener {
   })
   @EventHandler(priority = EventPriority.LOWEST)
   public void stopLiquidMoving(BlockFromToEvent event){
-	  Block to = event.getToBlock();
-	  Block from = event.getBlock();
-	  if (to.getLocation().getBlockY() < config_.get("max_water_lava_height").getInt())
-		  return;
-	  Material mat = from.getType();
-	  if (!(mat.equals(Material.WATER) || mat.equals(Material.STATIONARY_WATER) ||
-			  mat.equals(Material.LAVA) || mat.equals(Material.STATIONARY_LAVA)))
-		  return;
-	  Chunk c = to.getChunk();
-	  if (!waterChunks.containsKey(c)){
-		  waterChunks.put(c, 0);
-	  }
-	  
-	  Integer i = waterChunks.get(c);
-	  i = i+1;
-	  waterChunks.put(c, i);
-	  int amount = getWaterInNearbyChunks(c);
-	  
-	  if (amount > config_.get("max_water_lava_amount").getInt())
-		  event.setCancelled(true);
-	  
-	  if (waterSchedule != null)
-		  return;
-	  
-	  waterSchedule = Bukkit.getScheduler().runTaskLater(this, new Runnable(){
-
-		@Override
-		public void run() {
-			waterChunks.clear();
-			waterSchedule = null;
-		}
-		  
-	  }, config_.get("max_water_lava_timer").getInt());
+    Block to = event.getToBlock();
+    Block from = event.getBlock();
+    if (to.getLocation().getBlockY() < config_.get("max_water_lava_height").getInt()) {
+      return;
+    }
+    Material mat = from.getType();
+    if (!(mat.equals(Material.WATER) || mat.equals(Material.STATIONARY_WATER) ||
+          mat.equals(Material.LAVA) || mat.equals(Material.STATIONARY_LAVA))) {
+      return;
+    }
+    Chunk c = to.getChunk();
+    if (!waterChunks.containsKey(c)){
+      waterChunks.put(c, 0);
+    }
+    Integer i = waterChunks.get(c);
+    i = i + 1;
+    waterChunks.put(c, i);
+    int amount = getWaterInNearbyChunks(c);
+    if (amount > config_.get("max_water_lava_amount").getInt()) {
+      event.setCancelled(true);
+    }
+    if (waterSchedule != null) {
+      return;
+    }
+    waterSchedule = Bukkit.getScheduler().runTaskLater(this, new Runnable(){
+      @Override
+      public void run() {
+        waterChunks.clear();
+        waterSchedule = null;
+      }
+    }, config_.get("max_water_lava_timer").getInt());
   }
-  
+
   public int getWaterInNearbyChunks(Chunk chunk){
-	  World world = chunk.getWorld();
-	  Chunk[] chunks = {
-			  world.getChunkAt(chunk.getX(), chunk.getZ()), world.getChunkAt(chunk.getX()-1, chunk.getZ()),
-			  world.getChunkAt(chunk.getX(), chunk.getZ()-1), world.getChunkAt(chunk.getX()-1, chunk.getZ()-1),
-			  world.getChunkAt(chunk.getX()+1, chunk.getZ()), world.getChunkAt(chunk.getX(), chunk.getZ()+1),
-			  world.getChunkAt(chunk.getX()+1, chunk.getZ()+1), world.getChunkAt(chunk.getX()-1, chunk.getZ()+1),
-			  world.getChunkAt(chunk.getX()+1, chunk.getZ()-1)
-	  };
-	  int count = 0;
-	  for (Chunk c: chunks){
-		  Integer amount = waterChunks.get(c);
-		  if (amount == null)
-			  continue;
-		  count += amount;
-	  }
-	  return count;
+    World world = chunk.getWorld();
+    Chunk[] chunks = {
+        world.getChunkAt(chunk.getX(), chunk.getZ()), world.getChunkAt(chunk.getX()-1, chunk.getZ()),
+        world.getChunkAt(chunk.getX(), chunk.getZ()-1), world.getChunkAt(chunk.getX()-1, chunk.getZ()-1),
+        world.getChunkAt(chunk.getX()+1, chunk.getZ()), world.getChunkAt(chunk.getX(), chunk.getZ()+1),
+        world.getChunkAt(chunk.getX()+1, chunk.getZ()+1), world.getChunkAt(chunk.getX()-1, chunk.getZ()+1),
+        world.getChunkAt(chunk.getX()+1, chunk.getZ()-1)
+    };
+    int count = 0;
+    for (Chunk c: chunks){
+      Integer amount = waterChunks.get(c);
+      if (amount == null)
+        continue;
+      count += amount;
+    }
+    return count;
   }
   // ================================================
   // Changes Strength Potions, strength_multiplier 3 is roughly Pre-1.6 Level
