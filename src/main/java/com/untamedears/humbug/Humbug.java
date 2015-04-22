@@ -14,8 +14,11 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_7_R4.EntityTypes;
-import net.minecraft.server.v1_7_R4.Item;
+import net.minecraft.server.v1_8_R2.EntityTypes;
+import net.minecraft.server.v1_8_R2.Item;
+import net.minecraft.server.v1_8_R2.ItemEnderPearl;
+import net.minecraft.server.v1_8_R2.MinecraftKey;
+import net.minecraft.server.v1_8_R2.RegistryID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -2082,13 +2085,48 @@ public class Humbug extends JavaPlugin implements Listener {
   // ================================================
   // Adjust ender pearl gravity
 
+  public final static int pearlId = 368;
+  public final static MinecraftKey pearlKey = new MinecraftKey("ender_pearl");
+
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @BahHumbug(opt="ender_pearl_gravity", type=OptType.Double, def="0.060000")
   public void hookEnderPearls() {
-    Item.REGISTRY.a(256 + 112, "enderPearl", new CustomNMSItemEnderPearl(config_));
     try {
       // They thought they could stop us by preventing us from registering an
       // item. We'll show them
+      Field idRegistryField = Item.REGISTRY.getClass().getDeclaredField("a");
+      idRegistryField.setAccessible(true);
+      Object idRegistry = idRegistryField.get(Item.REGISTRY);
+
+      Field idRegistryMapField = idRegistry.getClass().getDeclaredField("a");
+      idRegistryMapField.setAccessible(true);
+      Object idRegistryMap = idRegistryMapField.get(idRegistry);
+
+      Field idRegistryItemsField = idRegistry.getClass().getDeclaredField("b");
+      idRegistryItemsField.setAccessible(true);
+      Object idRegistryItemList = idRegistryItemsField.get(idRegistry);
+
+      // Remove ItemEnderPearl from the ID Registry
+      Item idItem = null;
+      Iterator<Item> itemListIter = ((List<Item>)idRegistryItemList).iterator();
+      while (itemListIter.hasNext()) {
+        idItem = itemListIter.next();
+        if (idItem == null) {
+          continue;
+        }
+        if (!(idItem instanceof ItemEnderPearl)) {
+          continue;
+        }
+        itemListIter.remove();
+        break;
+      }
+      if (idItem != null) {
+        ((Map<Item, Integer>)idRegistryMap).remove(idItem);
+      }
+      // Register our custom pearl Item.
+      Item.REGISTRY.a(pearlId, pearlKey, new CustomNMSItemEnderPearl(config_));
+
+      // Setup the custom entity
       Field fieldStringToClass = EntityTypes.class.getDeclaredField("c");
       Field fieldClassToString = EntityTypes.class.getDeclaredField("d");
       fieldStringToClass.setAccessible(true);
@@ -2110,12 +2148,6 @@ public class Humbug extends JavaPlugin implements Listener {
       
       mapClassToString.put(CustomNMSEntityEnderPearl.class, "ThrownEnderpearl");
       mapClassToId.put(CustomNMSEntityEnderPearl.class, Integer.valueOf(14));
-      
-      fieldStringToClass.set(null, mapStringToClass);
-      fieldClassToString.set(null, mapClassToString);
-      
-      fieldClassToId.set(null, mapClassToId);
-      fieldStringToId.set(null, mapStringToId);
     } catch (Exception e) {
       Humbug.severe("Exception while overriding MC's ender pearl class");
       e.printStackTrace();
