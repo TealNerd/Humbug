@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.minecraft.server.v1_8_R2.EntityTypes;
@@ -1494,6 +1495,7 @@ public class Humbug extends JavaPlugin implements Listener {
   })
   @EventHandler(priority = EventPriority.LOWEST)
   public void stopLiquidMoving(BlockFromToEvent event){
+	  try {
     Block to = event.getToBlock();
     Block from = event.getBlock();
     if (to.getLocation().getBlockY() < config_.get("max_water_lava_height").getInt()) {
@@ -1525,6 +1527,10 @@ public class Humbug extends JavaPlugin implements Listener {
         waterSchedule = null;
       }
     }, config_.get("max_water_lava_timer").getInt());
+	  } catch (Exception e){
+		  getLogger().log(Level.INFO, "Tried getting info from a chunk before it generated, skipping.");
+		  return;
+	  }
   }
 
   public int getWaterInNearbyChunks(Chunk chunk){
