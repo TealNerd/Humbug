@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.minecraft.server.v1_8_R2.EntityEnderPearl;
 import net.minecraft.server.v1_8_R2.EntityTypes;
 import net.minecraft.server.v1_8_R2.Item;
 import net.minecraft.server.v1_8_R2.ItemEnderPearl;
@@ -71,6 +72,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ExpBottleEvent;
@@ -96,6 +98,7 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.EntityEquipment;
@@ -733,7 +736,7 @@ public class Humbug extends JavaPlugin implements Listener {
     @BahHumbug(opt="portal_extra_wither_skele_spawn_rate", type=OptType.Int),
     @BahHumbug(opt="portal_pig_spawn_multiplier", type=OptType.Int)
   })
-  @EventHandler(ignoreCancelled=true)
+  @EventHandler(priority = EventPriority.HIGH, ignoreCancelled=true)
   public void spawnMoreHellMonsters(CreatureSpawnEvent e) {
     final Location loc = e.getLocation();
     final World world = loc.getWorld();
@@ -843,6 +846,42 @@ public class Humbug extends JavaPlugin implements Listener {
     drops.add(item);
   }
 
+  // ================================================
+  // Fix a few issues with pearls, specifically pearls in unloaded chunks and slime blocks.
+  
+  @BahHumbug(opt="remove_pearls_chunks", type=OptType.Bool, def = "true")
+  @EventHandler()
+  public void onChunkUnloadEvent(ChunkUnloadEvent event){
+	  Entity[] entities = event.getChunk().getEntities();
+	  for (Entity ent: entities)
+		  if (ent.getType() == EntityType.ENDER_PEARL)
+			  ent.remove();
+  }
+  
+  private void registerTimerForPearlCheck(){
+	  Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+
+		@Override
+		public void run() {
+			for (Entity ent: pearlTime.keySet()){
+				if (pearlTime.get(ent).booleanValue()){
+					ent.remove();
+				}
+				else 
+					pearlTime.put(ent, true);
+			}
+		}
+		  
+	  }, 100, 200);
+  }
+  
+  private Map<Entity, Boolean> pearlTime = new HashMap<Entity, Boolean>();
+  public void onPearlLastingTooLong(EntityInteractEvent event){
+	  if (event.getEntityType() != EntityType.ENDER_PEARL)
+		  return;
+	  Entity ent = event.getEntity();
+	  pearlTime.put(ent, false);
+  }
   // ================================================
   // Generic mob drop rate adjustment
   
@@ -2095,7 +2134,7 @@ public class Humbug extends JavaPlugin implements Listener {
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @BahHumbug(opt="ender_pearl_gravity", type=OptType.Double, def="0.060000")
-  public void hookEnderPearls() {
+  private void hookEnderPearls() {
     try {
       // They thought they could stop us by preventing us from registering an
       // item. We'll show them
@@ -2311,7 +2350,8 @@ public class Humbug extends JavaPlugin implements Listener {
   public void onLoad()
   {
     loadConfiguration();
-    hookEnderPearls();
+    //hookEnderPearls();
+    registerTimerForPearlCheck();
     info("Loaded");
   }
 
