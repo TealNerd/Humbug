@@ -2351,7 +2351,6 @@ public class Humbug extends JavaPlugin implements Listener {
   {
     loadConfiguration();
     //hookEnderPearls();
-    registerTimerForPearlCheck();
     info("Loaded");
   }
 
@@ -2360,6 +2359,7 @@ public class Humbug extends JavaPlugin implements Listener {
     registerCommands();
     removeRecipies();
     removeBooks();
+    registerTimerForPearlCheck();
     global_instance_ = this;
     info("Enabled");
   }
