@@ -1016,7 +1016,7 @@ public class Humbug extends JavaPlugin implements Listener {
  @BahHumbug({
 	  @BahHumbug(opt="ench_gold_app_craftable", def = "false"),
 	  @BahHumbug(opt="moss_stone_craftable", def = "false"),
-	  @BahHumbug(opt="cracked_stone_craftable", def = "false")
+	  @BahHumbug(opt="cracked_stone_craftable", def = "false"),
 	  @BahHumbug(opt="moss_brick_craftable", def = "false"),
 	  @BahHumbug(opt="chiseled_stone_craftable", def = "false")
   })
