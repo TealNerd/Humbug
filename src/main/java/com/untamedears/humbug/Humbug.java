@@ -107,6 +107,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.FurnaceRecipe
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -979,6 +980,17 @@ public class Humbug extends JavaPlugin implements Listener {
     item.setDurability((short)0);
     item.setAmount(stack_size);
   }
+  
+public boolean isCrackedStone(ItemStack item) {
+if (item == null) {
+return false;
+}
+if (item.getDurability() != 2) {
+return false;
+}
+Material material = item.getType();
+return material.equals(Material.SMOOTH_BRICK);
+}
 
   @BahHumbug(opt="ench_gold_app_craftable", def = "false")
   public void removeRecipies() {
@@ -993,6 +1005,13 @@ public class Humbug extends JavaPlugin implements Listener {
           isEnchantedGoldenApple(resulting_item)) {
         it.remove();
         info("Enchanted Golden Apple Recipe disabled");
+      }
+      if (recipe instanceof FurnaceRecipe) {
+          FurnaceRecipe fre = (FurnaceRecipe) recipe;
+          if (isCrackedStone(fre.getResult())) {
+                  it.remove();
+                  info("Enchanted Golden Apple Recipe disabled");
+          }
       }
   }
   }
