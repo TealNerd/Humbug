@@ -963,12 +963,34 @@ public class Humbug extends JavaPlugin implements Listener {
     return material.equals(Material.GOLDEN_APPLE);
   }
   
+   public boolean isMossyStoneBrick(ItemStack item) {
+	// Mossy stone bricks are stone bricks with 1 durability
+	if (item == null) {
+		return false;
+	}
+	if (item.getDurability() != 1) {
+		return false;
+	}
+	Material material = item.getType();
+	return material.equals(Material.SMOOTH_BRICK);
+  }
   public boolean isCrackedStoneBrick(ItemStack item) {
 	// Cracked stone bricks are stone bricks with 2 durability
 	if (item == null) {
 		return false;
 	}
 	if (item.getDurability() != 2) {
+		return false;
+	}
+	Material material = item.getType();
+	return material.equals(Material.SMOOTH_BRICK);
+  }
+  public boolean isChiseledStoneBrick(ItemStack item) {
+	// Chiseled stone bricks are stone bricks with 3 durability
+	if (item == null) {
+		return false;
+	}
+	if (item.getDurability() != 3) {
 		return false;
 	}
 	Material material = item.getType();
@@ -991,13 +1013,15 @@ public class Humbug extends JavaPlugin implements Listener {
     item.setAmount(stack_size);
   }
 
-  @BahHumbugs({
+ @BahHumbug({
 	  @BahHumbug(opt="ench_gold_app_craftable", def = "false"),
 	  @BahHumbug(opt="moss_stone_craftable", def = "false"),
 	  @BahHumbug(opt="cracked_stone_craftable", def = "false")
+	  @BahHumbug(opt="moss_brick_craftable", def = "false"),
+	  @BahHumbug(opt="chiseled_stone_craftable", def = "false")
   })
   public void removeRecipies() {
-    if (config_.get("ench_gold_app_craftable").getBool()&&config_.get("moss_stone_craftable").getBool()&&config_.get("cracked_stone_craftable").getBool()) {
+    if (config_.get("ench_gold_app_craftable").getBool()&&config_.get("moss_stone_craftable").getBool()&&config_.get("cracked_stone_craftable").getBool()&&config_.get("moss_brick_craftable").getBool()&&config_.get("chiseled_stone_craftable").getBool()) {
       return;
     }
     Iterator<Recipe> it = getServer().recipeIterator();
@@ -1016,6 +1040,16 @@ public class Humbug extends JavaPlugin implements Listener {
       }else
       if (!config_.get("cracked_stone_craftable").getBool() &&
     		  isCrackedStoneBrick(resulting_item)) {
+    	it.remove();
+    	info("Cracked Stone Recipe disabled");
+    }
+	if (!config_.get("moss_brick_craftable").getBool() &&
+    		  isMossyStoneBrick(resulting_item)) {
+    	it.remove();
+    	info("Cracked Stone Recipe disabled");
+    }
+	if (!config_.get("chiseled_stone_craftable").getBool() &&
+    		  isChiseledStoneBrick(resulting_item)) {
     	it.remove();
     	info("Cracked Stone Recipe disabled");
     }
