@@ -980,9 +980,7 @@ public class Humbug extends JavaPlugin implements Listener {
     item.setAmount(stack_size);
   }
 
- @BahHumbug({
-	  @BahHumbug(opt="ench_gold_app_craftable", def = "false")
-  })
+  @BahHumbug(opt="ench_gold_app_craftable", def = "false")
   public void removeRecipies() {
     if (config_.get("ench_gold_app_craftable").getBool()) {
       return;
