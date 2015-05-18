@@ -1976,7 +1976,7 @@ return material.equals(Material.SMOOTH_BRICK);
       return;
     }
     final Location to = event.getTo();
-    final Material boatOn = to.getBlock().getRelative(BlockFace.DOWN).getType();
+    final Material boatOn = to.getBlock().getRelative(BlockFace.DOWN, 0).getType();
     if (boatOn.equals(Material.STATIONARY_WATER) || boatOn.equals(Material.WATER)) {
         return;
     }
