@@ -184,9 +184,6 @@ public class Humbug extends JavaPlugin implements Listener {
     if (!event.isCancelled()) {
         onChangingSpawners(event);
     }
-    if (!event.isCancelled()) {
-        onEquippingBanners(event);
-    }
   }
   @BahHumbug(opt="changing_spawners_with_eggs", def="true")
   public void onChangingSpawners(PlayerInteractEvent event)
@@ -204,6 +201,7 @@ public class Humbug extends JavaPlugin implements Listener {
   public void onPlayerInteractAll(PlayerInteractEvent event) {
     onPlayerEatGoldenApple(event);
     throttlePearlTeleport(event);
+    onEquippingBanners(event);
   }
 
   // ================================================
@@ -2390,7 +2388,7 @@ return material.equals(Material.SMOOTH_BRICK);
 	  }
 	  if (event.getItem() == null
 				|| !event.getItem().getType().equals(Material.BANNER)
-				|| event.getAction() != Action.LEFT_CLICK_AIR) {
+				|| (event.getAction() != Action.LEFT_CLICK_AIR&&event.getAction() != Action.LEFT_CLICK_BLOCK)) {
 		  return;
 	  }
 	  Player player = event.getPlayer();
