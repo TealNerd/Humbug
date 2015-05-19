@@ -183,7 +183,10 @@ public class Humbug extends JavaPlugin implements Listener {
     }
     if (!event.isCancelled()) {
         onChangingSpawners(event);
-      }
+    }
+    if (!event.isCancelled()) {
+        onEquippingBanners(event);
+    }
   }
   @BahHumbug(opt="changing_spawners_with_eggs", def="true")
   public void onChangingSpawners(PlayerInteractEvent event)
@@ -2377,7 +2380,31 @@ return material.equals(Material.SMOOTH_BRICK);
           loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
     }
   }
-
+  
+  // ================================================
+  // Equipping banners
+  @BahHumbug(opt="equipping_banners", def="true")
+  public void onEquippingBanners(PlayerInteractEvent event){
+	  if(!config_.get("equipping_banners").getBool()) {
+	      return;
+	  }
+	  if (event.getItem() == null
+				|| !event.getItem().getType().equals(Material.BANNER)
+				|| event.getAction() != Action.LEFT_CLICK_AIR) {
+		  return;
+	  }
+	  Player player = event.getPlayer();
+	  ItemStack banner = new ItemStack(event.getItem());
+	  banner.setAmount(1);
+	  player.getInventory().removeItem(banner);
+	  if (player.getEquipment().getHelmet() != null) {
+		  if(player.getInventory().addItem(player.getEquipment().getHelmet()).size() != 0) {
+			  player.getWorld().dropItem(player.getLocation(), player.getEquipment().getHelmet());
+		  }
+	  }
+	  player.getEquipment().setHelmet(banner);
+  }
+  
   // ================================================
   // General
 
