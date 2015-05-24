@@ -185,17 +185,6 @@ public class Humbug extends JavaPlugin implements Listener {
         onChangingSpawners(event);
     }
   }
-  @BahHumbug(opt="changing_spawners_with_eggs", def="true")
-  public void onChangingSpawners(PlayerInteractEvent event)
-  {
-	if (!config_.get("changing_spawners_with_eggs").getBool()) {
-		return;
-	}
-    if ((event.getClickedBlock() != null) && (event.getItem() != null) && 
-      (event.getClickedBlock().getType()==Material.MOB_SPAWNER) && (event.getItem().getType() == Material.MONSTER_EGG)) {
-      event.setCancelled(true);
-    }
-  }
 
   @EventHandler(priority = EventPriority.LOWEST) // ignoreCancelled=false
   public void onPlayerInteractAll(PlayerInteractEvent event) {
@@ -1015,6 +1004,17 @@ public class Humbug extends JavaPlugin implements Listener {
           }
 		}
     }
+  }
+  
+  public boolean isCrackedStone(ItemStack item) {
+	  if (item == null)
+		  return false;
+	  if (item.getDurability() != 2){
+		  return false;
+	  }
+	  
+	  Material material = item.getType();
+	  return material.equals(Material.SMOOTH_BRICK);
   }
 
   // EventHandler registered in onPlayerInteractAll
