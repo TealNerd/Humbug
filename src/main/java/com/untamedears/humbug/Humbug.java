@@ -1013,7 +1013,7 @@ public class Humbug extends JavaPlugin implements Listener {
                   it.remove();
                   info("Cracked Stone Furnace Recipe disabled");
           }
-      }
+		}
     }
   }
 
@@ -1329,7 +1329,7 @@ public class Humbug extends JavaPlugin implements Listener {
       final ItemStack item = dropList.get(i);
       if (item.getType().equals(Material.WRITTEN_BOOK)) {
         final BookMeta bookMeta = (BookMeta)item.getItemMeta();
-        if (bookMeta.getTitle().equals(config_.getTitle())) {
+        if (bookMeta.getTitle().equals(config_.getTitle()) && bookMeta.getAuthor().equals(config_.getAuthor())) {
           playersWithN00bBooks_.add(playerName);
           dropList.remove(i);
           return;
