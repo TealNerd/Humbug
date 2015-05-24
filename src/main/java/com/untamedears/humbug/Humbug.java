@@ -964,7 +964,18 @@ public class Humbug extends JavaPlugin implements Listener {
     Material material = item.getType();
     return material.equals(Material.GOLDEN_APPLE);
   }
-  
+
+  public boolean isCrackedStoneBrick(ItemStack item) {
+	// Cracked stone bricks are stone bricks with 2 durability
+	if (item == null) {
+		return false;
+	}
+	if (item.getDurability() != 2) {
+		return false;
+	}
+	Material material = item.getType();
+	return material.equals(Material.SMOOTH_BRICK);
+  }
 
   public void replaceEnchantedGoldenApple(
       String player_name, ItemStack item, int inventory_max_stack_size) {
@@ -982,20 +993,9 @@ public class Humbug extends JavaPlugin implements Listener {
     item.setAmount(stack_size);
   }
   
-public boolean isCrackedStone(ItemStack item) {
-if (item == null) {
-return false;
-}
-if (item.getDurability() != 2) {
-return false;
-}
-Material material = item.getType();
-return material.equals(Material.SMOOTH_BRICK);
-}
-
   @BahHumbug(opt="ench_gold_app_craftable", def = "false")
   public void removeRecipies() {
-    if (config_.get("ench_gold_app_craftable").getBool()) {
+    if (config_.get("ench_gold_app_craftable").getBool()&&config_.get("moss_stone_craftable").getBool()&&config_.get("cracked_stone_craftable").getBool()) {
       return;
     }
     Iterator<Recipe> it = getServer().recipeIterator();
@@ -1011,10 +1011,10 @@ return material.equals(Material.SMOOTH_BRICK);
           FurnaceRecipe fre = (FurnaceRecipe) recipe;
           if (isCrackedStone(fre.getResult())) {
                   it.remove();
-                  info("Enchanted Golden Apple Recipe disabled");
+                  info("Cracked Stone Furnace Recipe disabled");
           }
       }
-  }
+    }
   }
 
   // EventHandler registered in onPlayerInteractAll
@@ -2401,6 +2401,21 @@ return material.equals(Material.SMOOTH_BRICK);
 		  }
 	  }
 	  player.getEquipment().setHelmet(banner);
+  }
+  
+  // ================================================
+  // Disable changing spawners with eggs
+  
+  @BahHumbug(opt="changing_spawners_with_eggs", def="true")
+  public void onChangingSpawners(PlayerInteractEvent event)
+  {
+	if (!config_.get("changing_spawners_with_eggs").getBool()) {
+		return;
+	}
+    if ((event.getClickedBlock() != null) && (event.getItem() != null) && 
+      (event.getClickedBlock().getType()==Material.MOB_SPAWNER) && (event.getItem().getType() == Material.MONSTER_EGG)) {
+      event.setCancelled(true);
+    }
   }
   
   // ================================================
