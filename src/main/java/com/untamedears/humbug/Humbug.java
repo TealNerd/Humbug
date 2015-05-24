@@ -12,10 +12,15 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_7_R4.EntityTypes;
-import net.minecraft.server.v1_7_R4.Item;
+import net.minecraft.server.v1_8_R2.EntityEnderPearl;
+import net.minecraft.server.v1_8_R2.EntityTypes;
+import net.minecraft.server.v1_8_R2.Item;
+import net.minecraft.server.v1_8_R2.ItemEnderPearl;
+import net.minecraft.server.v1_8_R2.MinecraftKey;
+import net.minecraft.server.v1_8_R2.RegistryID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -67,6 +72,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ExpBottleEvent;
@@ -92,6 +98,7 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.EntityEquipment;
@@ -100,6 +107,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -174,7 +182,18 @@ public class Humbug extends JavaPlugin implements Listener {
       onEnchantingTableUse(event);
     }
     if (!event.isCancelled()) {
-      onChangingSpawners(event);
+        onChangingSpawners(event);
+    }
+  }
+  @BahHumbug(opt="changing_spawners_with_eggs", def="true")
+  public void onChangingSpawners(PlayerInteractEvent event)
+  {
+	if (!config_.get("changing_spawners_with_eggs").getBool()) {
+		return;
+	}
+    if ((event.getClickedBlock() != null) && (event.getItem() != null) && 
+      (event.getClickedBlock().getType()==Material.MOB_SPAWNER) && (event.getItem().getType() == Material.MONSTER_EGG)) {
+      event.setCancelled(true);
     }
   }
 
@@ -182,6 +201,7 @@ public class Humbug extends JavaPlugin implements Listener {
   public void onPlayerInteractAll(PlayerInteractEvent event) {
     onPlayerEatGoldenApple(event);
     throttlePearlTeleport(event);
+    onEquippingBanners(event);
   }
 
   // ================================================
@@ -467,16 +487,16 @@ public class Humbug extends JavaPlugin implements Listener {
 
   @BahHumbug(opt="enchanting_table", def = "false")
   public void onEnchantingTableUse(PlayerInteractEvent event) {
-	  if(!config_.get("enchanting_table").getBool()) {
-		  return;
-	  }
-	  Action action = event.getAction();
-	  Material material = event.getClickedBlock().getType();
-	  boolean enchanting_table = action == Action.RIGHT_CLICK_BLOCK &&
-			  					 material.equals(Material.ENCHANTMENT_TABLE);
-	  if(enchanting_table) {
-		  event.setCancelled(true);
-	  }
+    if(!config_.get("enchanting_table").getBool()) {
+      return;
+    }
+    Action action = event.getAction();
+    Material material = event.getClickedBlock().getType();
+    boolean enchanting_table = action == Action.RIGHT_CLICK_BLOCK &&
+                   material.equals(Material.ENCHANTMENT_TABLE);
+    if(enchanting_table) {
+      event.setCancelled(true);
+    }
   }
   
   @BahHumbug(opt="ender_chests_placeable", def="true")
@@ -732,7 +752,7 @@ public class Humbug extends JavaPlugin implements Listener {
     @BahHumbug(opt="portal_extra_wither_skele_spawn_rate", type=OptType.Int),
     @BahHumbug(opt="portal_pig_spawn_multiplier", type=OptType.Int)
   })
-  @EventHandler(ignoreCancelled=true)
+  @EventHandler(priority = EventPriority.HIGH, ignoreCancelled=true)
   public void spawnMoreHellMonsters(CreatureSpawnEvent e) {
     final Location loc = e.getLocation();
     final World world = loc.getWorld();
@@ -843,6 +863,42 @@ public class Humbug extends JavaPlugin implements Listener {
   }
 
   // ================================================
+  // Fix a few issues with pearls, specifically pearls in unloaded chunks and slime blocks.
+  
+  @BahHumbug(opt="remove_pearls_chunks", type=OptType.Bool, def = "true")
+  @EventHandler()
+  public void onChunkUnloadEvent(ChunkUnloadEvent event){
+	  Entity[] entities = event.getChunk().getEntities();
+	  for (Entity ent: entities)
+		  if (ent.getType() == EntityType.ENDER_PEARL)
+			  ent.remove();
+  }
+  
+  private void registerTimerForPearlCheck(){
+	  Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+
+		@Override
+		public void run() {
+			for (Entity ent: pearlTime.keySet()){
+				if (pearlTime.get(ent).booleanValue()){
+					ent.remove();
+				}
+				else 
+					pearlTime.put(ent, true);
+			}
+		}
+		  
+	  }, 100, 200);
+  }
+  
+  private Map<Entity, Boolean> pearlTime = new HashMap<Entity, Boolean>();
+  public void onPearlLastingTooLong(EntityInteractEvent event){
+	  if (event.getEntityType() != EntityType.ENDER_PEARL)
+		  return;
+	  Entity ent = event.getEntity();
+	  pearlTime.put(ent, false);
+  }
+  // ================================================
   // Generic mob drop rate adjustment
   
   @BahHumbug(opt="disable_xp_orbs", type=OptType.Bool, def = "true")
@@ -860,32 +916,31 @@ public class Humbug extends JavaPlugin implements Listener {
     }
     //set entity death xp to zero so they don't drop orbs
     if(config_.get("disable_xp_orbs").getBool()){
-    	event.setDroppedExp(0);
+      event.setDroppedExp(0);
     }
     //if a dropped item was in the mob's inventory, drop only one, otherwise drop the amount * the multiplier
     LivingEntity liveMob = (LivingEntity) mob;
     EntityEquipment mobEquipment = liveMob.getEquipment();
     ItemStack[] eeItem = mobEquipment.getArmorContents();
     for (ItemStack item : event.getDrops()) {
-    	boolean armor = false;
-    	boolean hand = false;
-    	for(ItemStack i : eeItem){
-    		if(i.isSimilar(item)){
-    			armor = true;
-    			item.setAmount(1);
-    		}
-    	}
-		if(item.isSimilar(mobEquipment.getItemInHand())){
-    		hand = true;
-    		item.setAmount(1);
-    	}
-    	if(!hand && !armor){
-    		int amount = item.getAmount() * multiplier;
-        	item.setAmount(amount);
-    	}	
-    }    
+      boolean armor = false;
+      boolean hand = false;
+      for(ItemStack i : eeItem){
+        if(i.isSimilar(item)){
+          armor = true;
+          item.setAmount(1);
+        }
+      }
+      if(item.isSimilar(mobEquipment.getItemInHand())){
+        hand = true;
+        item.setAmount(1);
+      }
+      if(!hand && !armor){
+        int amount = item.getAmount() * multiplier;
+          item.setAmount(amount);
+      }
+    }
   }
-  
 
   @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
   public void onEntityDeathEvent(EntityDeathEvent event) {
@@ -909,7 +964,7 @@ public class Humbug extends JavaPlugin implements Listener {
     Material material = item.getType();
     return material.equals(Material.GOLDEN_APPLE);
   }
-  
+
   public boolean isCrackedStoneBrick(ItemStack item) {
 	// Cracked stone bricks are stone bricks with 2 durability
 	if (item == null) {
@@ -937,12 +992,8 @@ public class Humbug extends JavaPlugin implements Listener {
     item.setDurability((short)0);
     item.setAmount(stack_size);
   }
-
-  @BahHumbug({
-	  @BahHumbug(opt="ench_gold_app_craftable", def = "false"),
-	  @BahHumbug(opt="moss_stone_craftable", def = "false"),
-	  @BahHumbug(opt="cracked_stone_craftable", def = "false")
-  })
+  
+  @BahHumbug(opt="ench_gold_app_craftable", def = "false")
   public void removeRecipies() {
     if (config_.get("ench_gold_app_craftable").getBool()&&config_.get("moss_stone_craftable").getBool()&&config_.get("cracked_stone_craftable").getBool()) {
       return;
@@ -955,16 +1006,14 @@ public class Humbug extends JavaPlugin implements Listener {
           isEnchantedGoldenApple(resulting_item)) {
         it.remove();
         info("Enchanted Golden Apple Recipe disabled");
-      }else
-      if (!config_.get("moss_stone_craftable").getBool() &&
-              resulting_item.getType().equals(Material.MOSSY_COBBLESTONE)) {
-        it.remove();
-        info("Moss Stone Recipe disabled");
-      }else
-      if (!config_.get("cracked_stone_craftable").getBool() &&
-    		  isCrackedStoneBrick(resulting_item)) {
-    	it.remove();
-    	info("Cracked Stone Recipe disabled");
+      }
+      if (recipe instanceof FurnaceRecipe) {
+          FurnaceRecipe fre = (FurnaceRecipe) recipe;
+          if (isCrackedStone(fre.getResult())) {
+                  it.remove();
+                  info("Cracked Stone Furnace Recipe disabled");
+          }
+      }
     }
   }
 
@@ -990,7 +1039,7 @@ public class Humbug extends JavaPlugin implements Listener {
   @BahHumbug(opt="disable_entities_portal", type = OptType.Bool, def = "true")
   @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
   public void entityPortalEvent(EntityPortalEvent event){
-	  event.setCancelled(config_.get("disable_entities_portal").getBool());
+    event.setCancelled(config_.get("disable_entities_portal").getBool());
   }
   //=================================================
   // Enchanted Book
@@ -1182,17 +1231,19 @@ public class Humbug extends JavaPlugin implements Listener {
   // Fix dupe bug with chests and other containers
   
   @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
-  public void blockExplodeEvent(EntityExplodeEvent event){
-	  List<HumanEntity> humans = new ArrayList<HumanEntity>();
-	  for (Block block: event.blockList()){
-		  if (block.getState() instanceof InventoryHolder){
-			  InventoryHolder holder = (InventoryHolder) block.getState();
-			  for (HumanEntity ent: holder.getInventory().getViewers())
-				  humans.add(ent);
-		  }
-	  }
-	  for (HumanEntity human: humans)
-		  human.closeInventory();
+  public void blockExplodeEvent(EntityExplodeEvent event) {
+    List<HumanEntity> humans = new ArrayList<HumanEntity>();
+    for (Block block: event.blockList()) {
+      if (block.getState() instanceof InventoryHolder) {
+        InventoryHolder holder = (InventoryHolder) block.getState();
+        for (HumanEntity ent: holder.getInventory().getViewers()) {
+          humans.add(ent);
+        }
+      }
+    }
+    for (HumanEntity human: humans) {
+      human.closeInventory();
+    }
   }
   
   // ==================================================
@@ -1483,30 +1534,30 @@ public class Humbug extends JavaPlugin implements Listener {
       }
     }
     if(!e.isCancelled() && config_.get("obsidian_generator").getBool()) {
-    	generateObsidian(e);
+      generateObsidian(e);
     }
   }
 
-  //generates obsidian like it did in 1.7
-  //note that this does not change anything in versions where obsidian generation exists
+  // Generates obsidian like it did in 1.7.
+  // Note that this does not change anything in versions where obsidian generation exists.
   @BahHumbug(opt="obsidian_generator", def="false")
   public void generateObsidian(BlockFromToEvent event) {
-	if(!event.getBlock().getType().equals(Material.STATIONARY_LAVA)) {
-		return;
-	}
-	if(!event.getToBlock().getType().equals(Material.TRIPWIRE)) {
-		return;
-	}
-	Block string = event.getToBlock();
-	if(!(string.getRelative(BlockFace.NORTH).getType().equals(Material.STATIONARY_WATER)
-		|| string.getRelative(BlockFace.EAST).getType().equals(Material.STATIONARY_WATER)
-		|| string.getRelative(BlockFace.WEST).getType().equals(Material.STATIONARY_WATER)
-		||	string.getRelative(BlockFace.SOUTH).getType().equals(Material.STATIONARY_WATER))) {
-		return;
-	}
-	string.setType(Material.OBSIDIAN);
+    if(!event.getBlock().getType().equals(Material.STATIONARY_LAVA)) {
+      return;
+    }
+    if(!event.getToBlock().getType().equals(Material.TRIPWIRE)) {
+      return;
+    }
+    Block string = event.getToBlock();
+    if(!(string.getRelative(BlockFace.NORTH).getType().equals(Material.STATIONARY_WATER)
+          || string.getRelative(BlockFace.EAST).getType().equals(Material.STATIONARY_WATER)
+          || string.getRelative(BlockFace.WEST).getType().equals(Material.STATIONARY_WATER)
+          ||  string.getRelative(BlockFace.SOUTH).getType().equals(Material.STATIONARY_WATER))) {
+      return;
+    }
+    string.setType(Material.OBSIDIAN);
   }
-	
+
   //=================================================
   // Stops perculators
   private Map<Chunk, Integer> waterChunks = new HashMap<Chunk, Integer>();
@@ -1518,58 +1569,61 @@ public class Humbug extends JavaPlugin implements Listener {
   })
   @EventHandler(priority = EventPriority.LOWEST)
   public void stopLiquidMoving(BlockFromToEvent event){
-	  Block to = event.getToBlock();
-	  Block from = event.getBlock();
-	  if (to.getLocation().getBlockY() < config_.get("max_water_lava_height").getInt())
+	  try {
+    Block to = event.getToBlock();
+    Block from = event.getBlock();
+    if (to.getLocation().getBlockY() < config_.get("max_water_lava_height").getInt()) {
+      return;
+    }
+    Material mat = from.getType();
+    if (!(mat.equals(Material.WATER) || mat.equals(Material.STATIONARY_WATER) ||
+          mat.equals(Material.LAVA) || mat.equals(Material.STATIONARY_LAVA))) {
+      return;
+    }
+    Chunk c = to.getChunk();
+    if (!waterChunks.containsKey(c)){
+      waterChunks.put(c, 0);
+    }
+    Integer i = waterChunks.get(c);
+    i = i + 1;
+    waterChunks.put(c, i);
+    int amount = getWaterInNearbyChunks(c);
+    if (amount > config_.get("max_water_lava_amount").getInt()) {
+      event.setCancelled(true);
+    }
+    if (waterSchedule != null) {
+      return;
+    }
+    waterSchedule = Bukkit.getScheduler().runTaskLater(this, new Runnable(){
+      @Override
+      public void run() {
+        waterChunks.clear();
+        waterSchedule = null;
+      }
+    }, config_.get("max_water_lava_timer").getInt());
+	  } catch (Exception e){
+		  getLogger().log(Level.INFO, "Tried getting info from a chunk before it generated, skipping.");
 		  return;
-	  Material mat = from.getType();
-	  if (!(mat.equals(Material.WATER) || mat.equals(Material.STATIONARY_WATER) ||
-			  mat.equals(Material.LAVA) || mat.equals(Material.STATIONARY_LAVA)))
-		  return;
-	  Chunk c = to.getChunk();
-	  if (!waterChunks.containsKey(c)){
-		  waterChunks.put(c, 0);
 	  }
-	  
-	  Integer i = waterChunks.get(c);
-	  i = i+1;
-	  waterChunks.put(c, i);
-	  int amount = getWaterInNearbyChunks(c);
-	  
-	  if (amount > config_.get("max_water_lava_amount").getInt())
-		  event.setCancelled(true);
-	  
-	  if (waterSchedule != null)
-		  return;
-	  
-	  waterSchedule = Bukkit.getScheduler().runTaskLater(this, new Runnable(){
-
-		@Override
-		public void run() {
-			waterChunks.clear();
-			waterSchedule = null;
-		}
-		  
-	  }, config_.get("max_water_lava_timer").getInt());
   }
-  
+
   public int getWaterInNearbyChunks(Chunk chunk){
-	  World world = chunk.getWorld();
-	  Chunk[] chunks = {
-			  world.getChunkAt(chunk.getX(), chunk.getZ()), world.getChunkAt(chunk.getX()-1, chunk.getZ()),
-			  world.getChunkAt(chunk.getX(), chunk.getZ()-1), world.getChunkAt(chunk.getX()-1, chunk.getZ()-1),
-			  world.getChunkAt(chunk.getX()+1, chunk.getZ()), world.getChunkAt(chunk.getX(), chunk.getZ()+1),
-			  world.getChunkAt(chunk.getX()+1, chunk.getZ()+1), world.getChunkAt(chunk.getX()-1, chunk.getZ()+1),
-			  world.getChunkAt(chunk.getX()+1, chunk.getZ()-1)
-	  };
-	  int count = 0;
-	  for (Chunk c: chunks){
-		  Integer amount = waterChunks.get(c);
-		  if (amount == null)
-			  continue;
-		  count += amount;
-	  }
-	  return count;
+    World world = chunk.getWorld();
+    Chunk[] chunks = {
+        world.getChunkAt(chunk.getX(), chunk.getZ()), world.getChunkAt(chunk.getX()-1, chunk.getZ()),
+        world.getChunkAt(chunk.getX(), chunk.getZ()-1), world.getChunkAt(chunk.getX()-1, chunk.getZ()-1),
+        world.getChunkAt(chunk.getX()+1, chunk.getZ()), world.getChunkAt(chunk.getX(), chunk.getZ()+1),
+        world.getChunkAt(chunk.getX()+1, chunk.getZ()+1), world.getChunkAt(chunk.getX()-1, chunk.getZ()+1),
+        world.getChunkAt(chunk.getX()+1, chunk.getZ()-1)
+    };
+    int count = 0;
+    for (Chunk c: chunks){
+      Integer amount = waterChunks.get(c);
+      if (amount == null)
+        continue;
+      count += amount;
+    }
+    return count;
   }
   // ================================================
   // Changes Strength Potions, strength_multiplier 3 is roughly Pre-1.6 Level
@@ -1923,7 +1977,7 @@ public class Humbug extends JavaPlugin implements Listener {
       return;
     }
     final Location to = event.getTo();
-    final Material boatOn = to.getBlock().getRelative(BlockFace.DOWN).getType();
+    final Material boatOn = to.getBlock().getType();
     if (boatOn.equals(Material.STATIONARY_WATER) || boatOn.equals(Material.WATER)) {
         return;
     }
@@ -2110,13 +2164,48 @@ public class Humbug extends JavaPlugin implements Listener {
   // ================================================
   // Adjust ender pearl gravity
 
+  public final static int pearlId = 368;
+  public final static MinecraftKey pearlKey = new MinecraftKey("ender_pearl");
+
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @BahHumbug(opt="ender_pearl_gravity", type=OptType.Double, def="0.060000")
-  public void hookEnderPearls() {
-    Item.REGISTRY.a(256 + 112, "enderPearl", new CustomNMSItemEnderPearl(config_));
+  private void hookEnderPearls() {
     try {
       // They thought they could stop us by preventing us from registering an
       // item. We'll show them
+      Field idRegistryField = Item.REGISTRY.getClass().getDeclaredField("a");
+      idRegistryField.setAccessible(true);
+      Object idRegistry = idRegistryField.get(Item.REGISTRY);
+
+      Field idRegistryMapField = idRegistry.getClass().getDeclaredField("a");
+      idRegistryMapField.setAccessible(true);
+      Object idRegistryMap = idRegistryMapField.get(idRegistry);
+
+      Field idRegistryItemsField = idRegistry.getClass().getDeclaredField("b");
+      idRegistryItemsField.setAccessible(true);
+      Object idRegistryItemList = idRegistryItemsField.get(idRegistry);
+
+      // Remove ItemEnderPearl from the ID Registry
+      Item idItem = null;
+      Iterator<Item> itemListIter = ((List<Item>)idRegistryItemList).iterator();
+      while (itemListIter.hasNext()) {
+        idItem = itemListIter.next();
+        if (idItem == null) {
+          continue;
+        }
+        if (!(idItem instanceof ItemEnderPearl)) {
+          continue;
+        }
+        itemListIter.remove();
+        break;
+      }
+      if (idItem != null) {
+        ((Map<Item, Integer>)idRegistryMap).remove(idItem);
+      }
+      // Register our custom pearl Item.
+      Item.REGISTRY.a(pearlId, pearlKey, new CustomNMSItemEnderPearl(config_));
+
+      // Setup the custom entity
       Field fieldStringToClass = EntityTypes.class.getDeclaredField("c");
       Field fieldClassToString = EntityTypes.class.getDeclaredField("d");
       fieldStringToClass.setAccessible(true);
@@ -2138,12 +2227,6 @@ public class Humbug extends JavaPlugin implements Listener {
       
       mapClassToString.put(CustomNMSEntityEnderPearl.class, "ThrownEnderpearl");
       mapClassToId.put(CustomNMSEntityEnderPearl.class, Integer.valueOf(14));
-      
-      fieldStringToClass.set(null, mapStringToClass);
-      fieldClassToString.set(null, mapClassToString);
-      
-      fieldClassToId.set(null, mapClassToId);
-      fieldStringToId.set(null, mapStringToId);
     } catch (Exception e) {
       Humbug.severe("Exception while overriding MC's ender pearl class");
       e.printStackTrace();
@@ -2295,7 +2378,31 @@ public class Humbug extends JavaPlugin implements Listener {
           loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
     }
   }
-
+  
+  // ================================================
+  // Equipping banners
+  @BahHumbug(opt="equipping_banners", def="true")
+  public void onEquippingBanners(PlayerInteractEvent event){
+	  if(!config_.get("equipping_banners").getBool()) {
+	      return;
+	  }
+	  if (event.getItem() == null
+				|| !event.getItem().getType().equals(Material.BANNER)
+				|| (event.getAction() != Action.LEFT_CLICK_AIR&&event.getAction() != Action.LEFT_CLICK_BLOCK)) {
+		  return;
+	  }
+	  Player player = event.getPlayer();
+	  ItemStack banner = new ItemStack(event.getItem());
+	  banner.setAmount(1);
+	  player.getInventory().removeItem(banner);
+	  if (player.getEquipment().getHelmet() != null) {
+		  if(player.getInventory().addItem(player.getEquipment().getHelmet()).size() != 0) {
+			  player.getWorld().dropItem(player.getLocation(), player.getEquipment().getHelmet());
+		  }
+	  }
+	  player.getEquipment().setHelmet(banner);
+  }
+  
   // ================================================
   // Disable changing spawners with eggs
   
@@ -2317,7 +2424,7 @@ public class Humbug extends JavaPlugin implements Listener {
   public void onLoad()
   {
     loadConfiguration();
-    hookEnderPearls();
+    //hookEnderPearls();
     info("Loaded");
   }
 
@@ -2326,6 +2433,7 @@ public class Humbug extends JavaPlugin implements Listener {
     registerCommands();
     removeRecipies();
     removeBooks();
+    registerTimerForPearlCheck();
     global_instance_ = this;
     info("Enabled");
   }

@@ -1,10 +1,12 @@
 package com.untamedears.humbug;
 
 
-import net.minecraft.server.v1_7_R4.EntityHuman;
-import net.minecraft.server.v1_7_R4.ItemEnderPearl;
-import net.minecraft.server.v1_7_R4.ItemStack;
-import net.minecraft.server.v1_7_R4.World;
+import net.minecraft.server.v1_8_R2.EntityHuman;
+import net.minecraft.server.v1_8_R2.Item;
+import net.minecraft.server.v1_8_R2.ItemEnderPearl;
+import net.minecraft.server.v1_8_R2.ItemStack;
+import net.minecraft.server.v1_8_R2.StatisticList;
+import net.minecraft.server.v1_8_R2.World;
 
 import com.untamedears.humbug.Config;
 import com.untamedears.humbug.CustomNMSEntityEnderPearl;
@@ -32,10 +34,11 @@ public class CustomNMSItemEnderPearl extends ItemEnderPearl {
           "random.bow",
           0.5F,
           0.4F / (g.nextFloat() * 0.4F + 0.8F));
-      if (!world.isStatic) {
+      if (!world.isClientSide) {
         double gravity = cfg_.get("ender_pearl_gravity").getDouble();
         world.addEntity(new CustomNMSEntityEnderPearl(world, entityhuman, gravity));
       }
+      entityhuman.b(StatisticList.USE_ITEM_COUNT[Item.getId(this)]);
       return itemstack;
     }
   }

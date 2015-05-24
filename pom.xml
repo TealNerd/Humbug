@@ -6,7 +6,7 @@
   <groupId>com.untamedears</groupId>
   <artifactId>Humbug</artifactId>
   <packaging>jar</packaging>
-  <version>1.5.21</version>
+  <version>1.6.0</version>
   <name>Humbug</name>
   <url>https://github.com/erocs/Humbug</url>
 
@@ -31,9 +31,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.bukkit</groupId>
-      <artifactId>craftbukkit</artifactId>
-      <version>1.7.10-R0.1-SNAPSHOT</version>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>Spigot1.8.3</artifactId>
+      <version>1.8.3</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -45,9 +45,5 @@
   </dependencies>
   
   <repositories>
-    <repository>
-      <id>bukkit-repo</id>
-      <url>http://repo.bukkit.org/content/groups/public/</url>
-    </repository>
   </repositories>
 </project>
