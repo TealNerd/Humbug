@@ -938,7 +938,7 @@ public class Humbug extends JavaPlugin implements Listener {
     item.setAmount(stack_size);
   }
 
-  @BahHumbug({
+  @BahHumbugs ({
 	  @BahHumbug(opt="ench_gold_app_craftable", def = "false"),
 	  @BahHumbug(opt="moss_stone_craftable", def = "false"),
 	  @BahHumbug(opt="cracked_stone_craftable", def = "false")
@@ -955,16 +955,15 @@ public class Humbug extends JavaPlugin implements Listener {
           isEnchantedGoldenApple(resulting_item)) {
         it.remove();
         info("Enchanted Golden Apple Recipe disabled");
-      }else
-      if (!config_.get("moss_stone_craftable").getBool() &&
-              resulting_item.getType().equals(Material.MOSSY_COBBLESTONE)) {
+      } else if (!config_.get("moss_stone_craftable").getBool() &&
+        resulting_item.getType().equals(Material.MOSSY_COBBLESTONE)) {
         it.remove();
         info("Moss Stone Recipe disabled");
-      }else
-      if (!config_.get("cracked_stone_craftable").getBool() &&
-    		  isCrackedStoneBrick(resulting_item)) {
-    	it.remove();
-    	info("Cracked Stone Recipe disabled");
+      } else if (!config_.get("cracked_stone_craftable").getBool() &&
+        isCrackedStoneBrick(resulting_item)) {
+        it.remove();
+        info("Cracked Stone Recipe disabled");
+      }
     }
   }
 
