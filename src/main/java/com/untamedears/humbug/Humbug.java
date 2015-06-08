@@ -33,6 +33,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 import org.bukkit.block.Hopper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -63,6 +64,7 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -2418,6 +2420,81 @@ public class Humbug extends JavaPlugin implements Listener {
     }
   }
   
+  // ================================================
+  // Enforce good sign data length
+
+  @BahHumbugs( {
+    @BahHumbug(opt="prevent_long_signs", def="true"),
+    @BahHumbug(opt="prevent_long_signs_limit", type=OptType.Int, def="30"),
+	@BahHumbug(opt="prevent_long_signs_allornothing", def="true"),
+	@BahHumbug(opt="prevent_long_signs_cancelevent", def="false")
+  })
+  @EventHandler(ignoreCancelled=true)
+  public void onSignFinalize(SignChangeEvent e) {
+    if (!config_.get("prevent_long_signs").getBool()) {
+      return;
+    }
+	String[] signdata = e.getLines();
+	for (int i = 0; i < signdata.length; i++) {
+      // need index, go oldschool
+      if (signdata[i] != null && signdata[i].length() > config_.get("prevent_long_signs_limit").getInt()) {
+        Player p = e.getPlayer();
+        warning("Player " + p.getPlayerListName() + " attempted to place a sign with line " + i + " having " +
+            signdata[i].length() + " characters.");
+        if (config_.get("prevent_long_signs_cancelevent").getBool()) {
+          e.setCancelled(true);
+          return;
+        }
+
+        if (config_.get("prevent_long_signs_allornothing").getBool()) {
+          e.setLine(i, "");
+        } else {
+          e.setLine(i, signdata[i].substring(0, config_.get("prevent_long_signs_limit").getInt()));
+        }
+      }
+    }
+  }
+
+  private Set<Long> signs_scanned_chunks_ = new TreeSet<Long>();
+
+  @BahHumbug(opt="prevent_long_signs_in_chunks", def="true")
+  @EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=false)
+  public void onSignLoads(ChunkLoadEvent event) {
+    if (!config_.get("prevent_long_signs_in_chunks").getBool()) {
+      return;
+    }
+    Chunk chunk = event.getChunk();
+    long chunk_id = (long)chunk.getX() << 32L + (long)chunk.getZ();
+    if (signs_scanned_chunks_.contains(chunk_id)) {
+      return;
+    }
+    signs_scanned_chunks_.add(chunk_id);
+
+    BlockState[] allTiles = chunk.getTileEntities();
+
+    for(BlockState tile: allTiles) {
+      if (tile instanceof Sign) {
+        Sign sign = (Sign) tile;
+        String[] signdata = sign.getLines();
+        for (int i = 0; i < signdata.length; i++) {
+          // need index, go oldschool
+          if (signdata[i] != null && signdata[i].length() > config_.get("prevent_long_signs_limit").getInt()) {
+            warning("A sign with line " + i + " having " +
+                signdata[i].length() + " characters found in chunk " + chunk_id);
+
+            if (config_.get("prevent_long_signs_allornothing").getBool()) {
+              sign.setLine(i, "");
+            } else {
+              sign.setLine(i, signdata[i].substring(0, config_.get("prevent_long_signs_limit").getInt()));
+            }
+
+            sign.update(true);
+          }
+        }
+      }
+    }
+  }
+
   // ================================================
   // General
 

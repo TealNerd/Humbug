@@ -48,6 +48,8 @@ Minecraft server plug-in: Simply toggles various functionality
 - Gives player saturation when they lose a point of hunger
 - Prevents a bug that allows tree growth to wrap around the world and overwrite blocks at 1+.
 - Adds option to (de)buff damage of arrows
+- Adds options to sanitize signs on placement
+- Adds option to sanitize existing signs in chunks
 
 The 'humbug' console command can be used to get or set any of the configuration file settings while the server is running. Also available are 'humbug save' and 'humbug reload'.
 
@@ -107,6 +109,11 @@ Config file settings:
 - prevent_tree_wraparound: Boolean, prevents structure growth from wrapping around from the top of the world to bedrock causing block overwrite.
 - disable_hopper_out_transfers: Boolean, disables transfers from hoppers to other hoppers or droppers
 - bow_buff: Double, (de)buffs bow damage. Set to 1 for default, less than one for debuff, more than one for buff, 0 for no effect and less than 0 for heal.
+- prevent_long_signs: Boolean, sanitize sign length
+- prevent_long_signs_limit: Int, max individual sign text row length
+- prevent_long_signs_allornothing: Boolean, if over limit clear line (if true) or truncate line (if false)
+- prevent_long_signs_cancelevent: Boolean, if over limit just cancel the sign change event
+- prevent_long_signs_in_chunks: Boolean, clears over-long signs from chunks as they load
 
 Default configuration (biased for CivCraft):
 - debug: false
@@ -164,3 +171,8 @@ Default configuration (biased for CivCraft):
 - prevent_tree_wraparound: true
 - disable_hopper_out_transfers: false
 - bow_buff: 1.0
+- prevent_long_signs: true
+- prevent_long_signs_limit: 30
+- prevent_long_signs_allornothing: true
+- prevent_long_signs_cancelevent: false
+- prevent_long_signs_in_chunks: true
