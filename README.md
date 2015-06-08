@@ -49,6 +49,7 @@ Minecraft server plug-in: Simply toggles various functionality
 - Prevents a bug that allows tree growth to wrap around the world and overwrite blocks at 1+.
 - Adds option to (de)buff damage of arrows
 - Adds options to sanitize signs on placement
+- Adds option to sanitize existing signs in chunks
 
 The 'humbug' console command can be used to get or set any of the configuration file settings while the server is running. Also available are 'humbug save' and 'humbug reload'.
 
@@ -112,6 +113,7 @@ Config file settings:
 - prevent_long_signs_limit: Int, max individual sign text row length
 - prevent_long_signs_allornothing: Boolean, if over limit clear line (if true) or truncate line (if false)
 - prevent_long_signs_cancelevent: Boolean, if over limit just cancel the sign change event
+- prevent_long_signs_in_chunks: Boolean, clears over-long signs from chunks as they load
 
 Default configuration (biased for CivCraft):
 - debug: false
@@ -173,3 +175,4 @@ Default configuration (biased for CivCraft):
 - prevent_long_signs_limit: 30
 - prevent_long_signs_allornothing: true
 - prevent_long_signs_cancelevent: false
+- prevent_long_signs_in_chunks: true

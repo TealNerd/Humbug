@@ -33,6 +33,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 import org.bukkit.block.Hopper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -2449,6 +2450,45 @@ public class Humbug extends JavaPlugin implements Listener {
           e.setLine(i, "");
         } else {
           e.setLine(i, signdata[i].substring(0, config_.get("prevent_long_signs_limit").getInt()));
+        }
+      }
+    }
+  }
+
+  private Set<Long> signs_scanned_chunks_ = new TreeSet<Long>();
+
+  @BahHumbug(opt="prevent_long_signs_in_chunks", def="true")
+  @EventHandler
+  public void onSignLoads(ChunkLoadEvent event) {
+    if (!config_.get("prevent_long_signs_in_chunks").getBool()) {
+      return;
+    }
+    Chunk chunk = event.getChunk();
+    long chunk_id = (long)chunk.getX() << 32L + (long)chunk.getZ();
+    if (signs_scanned_chunks_.contains(chunk_id)) {
+      return;
+    }
+    signs_scanned_chunks_.add(chunk_id);
+
+    BlockState[] allTiles = chunk.getTileEntities();
+
+    for(BlockState tile: allTiles) {
+      if (tile instanceof Sign) {
+        // found a sign.
+        Sign sign = (Sign) tile;
+        String[] signdata = sign.getLines();
+        for (int i = 0; i < signdata.length; i++) {
+          // need index, go oldschool
+          if (signdata[i] != null && signdata[i].length() > config_.get("prevent_long_signs_limit").getInt()) {
+            warning("A sign with line " + i + " having " +
+                signdata[i].length() + " characters found in chunk " + chunk_id);
+
+            if (config_.get("prevent_long_signs_allornothing").getBool()) {
+              sign.setLine(i, "");
+            } else {
+              sign.setLine(i, signdata[i].substring(0, config_.get("prevent_long_signs_limit").getInt()));
+            }
+          }
         }
       }
     }
