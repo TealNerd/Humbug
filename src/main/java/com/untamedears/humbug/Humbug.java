@@ -2458,7 +2458,7 @@ public class Humbug extends JavaPlugin implements Listener {
   private Set<Long> signs_scanned_chunks_ = new TreeSet<Long>();
 
   @BahHumbug(opt="prevent_long_signs_in_chunks", def="true")
-  @EventHandler
+  @EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=false)
   public void onSignLoads(ChunkLoadEvent event) {
     if (!config_.get("prevent_long_signs_in_chunks").getBool()) {
       return;
@@ -2474,7 +2474,6 @@ public class Humbug extends JavaPlugin implements Listener {
 
     for(BlockState tile: allTiles) {
       if (tile instanceof Sign) {
-        // found a sign.
         Sign sign = (Sign) tile;
         String[] signdata = sign.getLines();
         for (int i = 0; i < signdata.length; i++) {
@@ -2488,6 +2487,8 @@ public class Humbug extends JavaPlugin implements Listener {
             } else {
               sign.setLine(i, signdata[i].substring(0, config_.get("prevent_long_signs_limit").getInt()));
             }
+
+            sign.update(true);
           }
         }
       }
