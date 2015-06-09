@@ -2439,7 +2439,7 @@ public class Humbug extends JavaPlugin implements Listener {
       // need index, go oldschool
       if (signdata[i] != null && signdata[i].length() > config_.get("prevent_long_signs_limit").getInt()) {
         Player p = e.getPlayer();
-        warning("Player " + p.getPlayerListName() + " attempted to place a sign with line " + i + " having " +
+        warning("Player " + p.getPlayerListName() + " [" + p.getUniqueId() + "] attempted to place a sign with line " + i + " having " +
             signdata[i].length() + " characters.");
         if (config_.get("prevent_long_signs_cancelevent").getBool()) {
           e.setCancelled(true);
@@ -2480,7 +2480,8 @@ public class Humbug extends JavaPlugin implements Listener {
           // need index, go oldschool
           if (signdata[i] != null && signdata[i].length() > config_.get("prevent_long_signs_limit").getInt()) {
             warning("A sign with line " + i + " having " +
-                signdata[i].length() + " characters found in chunk " + chunk_id);
+                signdata[i].length() + " characters found in chunk " + chunk_id + " coords: " + 
+				tile.getX() + " " + tile.getY() + " " + tile.getZ());
 
             if (config_.get("prevent_long_signs_allornothing").getBool()) {
               sign.setLine(i, "");
