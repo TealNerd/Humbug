@@ -172,7 +172,7 @@ Default configuration (biased for CivCraft):
 - disable_hopper_out_transfers: false
 - bow_buff: 1.0
 - prevent_long_signs: true
-- prevent_long_signs_limit: 30
+- prevent_long_signs_limit: 100
 - prevent_long_signs_allornothing: true
 - prevent_long_signs_cancelevent: false
 - prevent_long_signs_in_chunks: true

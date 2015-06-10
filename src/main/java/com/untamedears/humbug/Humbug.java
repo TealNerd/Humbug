@@ -2425,7 +2425,7 @@ public class Humbug extends JavaPlugin implements Listener {
 
   @BahHumbugs( {
     @BahHumbug(opt="prevent_long_signs", def="true"),
-    @BahHumbug(opt="prevent_long_signs_limit", type=OptType.Int, def="30"),
+    @BahHumbug(opt="prevent_long_signs_limit", type=OptType.Int, def="100"),
 	@BahHumbug(opt="prevent_long_signs_allornothing", def="true"),
 	@BahHumbug(opt="prevent_long_signs_cancelevent", def="false")
   })
@@ -2436,16 +2436,19 @@ public class Humbug extends JavaPlugin implements Listener {
     }
 	String[] signdata = e.getLines();
 	for (int i = 0; i < signdata.length; i++) {
-      // need index, go oldschool
       if (signdata[i] != null && signdata[i].length() > config_.get("prevent_long_signs_limit").getInt()) {
         Player p = e.getPlayer();
-        warning("Player " + p.getPlayerListName() + " [" + p.getUniqueId() + "] attempted to place a sign with line " + i + " having " +
-            signdata[i].length() + " characters.");
+        Location location = e.getBlock().getLocation();
+        warning(String.format(
+            "Player '%s' [%s] attempted to place sign at ([%s] %d, %d, %d) with line %d having length %d > %d. Preventing.", 
+            p.getPlayerListName(), p.getUniqueId(), location.getWorld().getName(), 
+            location.getBlockX(), location.getBlockY(), location.getBlockZ(),
+            i, signdata[i].length(), config_.get("prevent_long_signs_limit").getInt()));
+
         if (config_.get("prevent_long_signs_cancelevent").getBool()) {
           e.setCancelled(true);
           return;
         }
-
         if (config_.get("prevent_long_signs_allornothing").getBool()) {
           e.setLine(i, "");
         } else {
@@ -2455,7 +2458,7 @@ public class Humbug extends JavaPlugin implements Listener {
     }
   }
 
-  private Set<Long> signs_scanned_chunks_ = new TreeSet<Long>();
+  private HashMap<String, Set<Long>> signs_scanned_chunks_ = new HashMap<String, Set<Long>>();
 
   @BahHumbug(opt="prevent_long_signs_in_chunks", def="true")
   @EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=false)
@@ -2464,11 +2467,16 @@ public class Humbug extends JavaPlugin implements Listener {
       return;
     }
     Chunk chunk = event.getChunk();
+    String world = chunk.getWorld().getName();
     long chunk_id = (long)chunk.getX() << 32L + (long)chunk.getZ();
-    if (signs_scanned_chunks_.contains(chunk_id)) {
-      return;
+    if (signs_scanned_chunks_.containsKey(world)) {
+      if (signs_scanned_chunks_.get(world).contains(chunk_id)) {
+        return;
+      }
+    } else {
+      signs_scanned_chunks_.put(world, new TreeSet<Long>()); 
     }
-    signs_scanned_chunks_.add(chunk_id);
+    signs_scanned_chunks_.get(world).add(chunk_id);
 
     BlockState[] allTiles = chunk.getTileEntities();
 
@@ -2477,11 +2485,12 @@ public class Humbug extends JavaPlugin implements Listener {
         Sign sign = (Sign) tile;
         String[] signdata = sign.getLines();
         for (int i = 0; i < signdata.length; i++) {
-          // need index, go oldschool
           if (signdata[i] != null && signdata[i].length() > config_.get("prevent_long_signs_limit").getInt()) {
-            warning("A sign with line " + i + " having " +
-                signdata[i].length() + " characters found in chunk " + chunk_id + " coords: " + 
-				tile.getX() + " " + tile.getY() + " " + tile.getZ());
+            Location location = sign.getLocation();
+            warning(String.format(
+                "Line %d in sign at ([%s] %d, %d, %d) is length %d > %d. Curating.", i,
+                world, location.getBlockX(), location.getBlockY(), location.getBlockZ(),
+                signdata[i].length(), config_.get("prevent_long_signs_limit").getInt()));
 
             if (config_.get("prevent_long_signs_allornothing").getBool()) {
               sign.setLine(i, "");
