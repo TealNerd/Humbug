@@ -15,12 +15,12 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_8_R2.EntityEnderPearl;
-import net.minecraft.server.v1_8_R2.EntityTypes;
-import net.minecraft.server.v1_8_R2.Item;
-import net.minecraft.server.v1_8_R2.ItemEnderPearl;
-import net.minecraft.server.v1_8_R2.MinecraftKey;
-import net.minecraft.server.v1_8_R2.RegistryID;
+import net.minecraft.server.v1_8_R3.EntityEnderPearl;
+import net.minecraft.server.v1_8_R3.EntityTypes;
+import net.minecraft.server.v1_8_R3.Item;
+import net.minecraft.server.v1_8_R3.ItemEnderPearl;
+import net.minecraft.server.v1_8_R3.MinecraftKey;
+import net.minecraft.server.v1_8_R3.RegistryID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -163,7 +163,7 @@ public class Humbug extends JavaPlugin implements Listener {
   }
 
   private Random prng_ = new Random();
-  private CombatTagManager combatTag_ = new CombatTagManager();
+  private CombatInterface combatTag_;
 
   public Humbug() {}
 
@@ -2523,6 +2523,10 @@ public class Humbug extends JavaPlugin implements Listener {
     registerTimerForPearlCheck();
     global_instance_ = this;
     info("Enabled");
+    if (Bukkit.getPluginManager().getPlugin("CombatTag") != null)
+    	combatTag_ = new CombatTagManager();
+    else if (Bukkit.getPluginManager().getPlugin("CombatTagPlus") != null)
+    	combatTag_ = new CombatTagPlusManager();
   }
   
   public void onDisable() {
