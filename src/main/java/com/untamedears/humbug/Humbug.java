@@ -743,7 +743,7 @@ public class Humbug extends JavaPlugin implements Listener {
     @BahHumbug(opt="portal_extra_wither_skele_spawn_rate", type=OptType.Int),
     @BahHumbug(opt="portal_pig_spawn_multiplier", type=OptType.Int)
   })
-  @EventHandler(priority = EventPriority.HIGH, ignoreCancelled=true)
+  @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
   public void spawnMoreHellMonsters(CreatureSpawnEvent e) {
     final Location loc = e.getLocation();
     final World world = loc.getWorld();
