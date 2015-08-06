@@ -1806,7 +1806,7 @@ public class Humbug extends JavaPlugin implements Listener {
       return;
     }
     Chunk chunk = event.getChunk();
-    long chunk_id = (long)chunk.getX() << 32L + (long)chunk.getZ();
+    long chunk_id = ((long)chunk.getX() << 32L) + (long)chunk.getZ();
     if (end_portal_scanned_chunks_.contains(chunk_id)) {
       return;
     }
@@ -2468,7 +2468,7 @@ public class Humbug extends JavaPlugin implements Listener {
     }
     Chunk chunk = event.getChunk();
     String world = chunk.getWorld().getName();
-    long chunk_id = (long)chunk.getX() << 32L + (long)chunk.getZ();
+    long chunk_id = ((long)chunk.getX() << 32L) + (long)chunk.getZ();
     if (signs_scanned_chunks_.containsKey(world)) {
       if (signs_scanned_chunks_.get(world).contains(chunk_id)) {
         return;
