@@ -1173,6 +1173,11 @@ public class Humbug extends JavaPlugin implements Listener {
       return;
     }
     Block block = event.getBlock();
+    Material material = block.getType();
+    if (!material.equals(Material.LAVA) &&
+        !material.equals(Material.STATIONARY_LAVA)) {
+      return;
+    }
     LavaAreaCheck(block, config_.get("cobble_from_lava_scan_radius").getInt());
   }
 
