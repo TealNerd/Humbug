@@ -2516,7 +2516,7 @@ public class Humbug extends JavaPlugin implements Listener {
   
   @EventHandler(priority = EventPriority.HIGHEST)
   public void adminAccessBlockedChest(PlayerInteractEvent e) {
-	  if (!e.getPlayer().isOp()) {
+	  if (!e.getPlayer().hasPermission("humbug.admin") && !e.getPlayer().isOp()) {
 		  return;
 	  }
 	  if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
