@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.ContainerBlock;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Hopper;
 import org.bukkit.command.Command;
@@ -2510,6 +2512,35 @@ public class Humbug extends JavaPlugin implements Listener {
         }
       }
     }
+  }
+  
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void adminAccessBlockedChest(PlayerInteractEvent e) {
+	  if (!e.getPlayer().hasPermission("humbug.admin") && !e.getPlayer().isOp()) {
+		  return;
+	  }
+	  if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+		  Player p = e.getPlayer();
+		  List <Block> blocks = p.getLineOfSight(new HashSet<Material>(), 8);
+		  for(Block b:blocks) {
+			  Material m = b.getType();
+			  if(m == Material.CHEST || m == Material.TRAPPED_CHEST) {
+				  if(b.getRelative(BlockFace.UP).getType().isOccluding()) {
+					  //dont show inventory twice if a normal chest is opened
+					  final Inventory che_inv = ((ContainerBlock)b).getInventory();
+					  final Inventory inv = Bukkit.createInventory(
+						        p, che_inv.getSize(), "Chest Inventory");
+						    for (int slot = 0; slot < che_inv.getSize(); slot++) {
+						      final ItemStack it = che_inv.getItem(slot);
+						      inv.setItem(slot, it);
+						    }
+						    p.openInventory(inv);
+						    p.updateInventory();	  
+				  }
+				  break;
+			  }
+		  }
+	  }
   }
 
   // ================================================
