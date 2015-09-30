@@ -2521,20 +2521,17 @@ public class Humbug extends JavaPlugin implements Listener {
 	  }
 	  if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 		  Player p = e.getPlayer();
-		  List <Block> blocks = p.getLineOfSight(new HashSet<Material>(), 8);
+		  Set <Material> s = new TreeSet<Material>();
+		  s.add(Material.AIR);
+		  s.add(Material.OBSIDIAN); //probably in a vault
+		  List <Block> blocks = p.getLineOfSight(s, 8);
 		  for(Block b:blocks) {
 			  Material m = b.getType();
 			  if(m == Material.CHEST || m == Material.TRAPPED_CHEST) {
 				  if(b.getRelative(BlockFace.UP).getType().isOccluding()) {
 					  //dont show inventory twice if a normal chest is opened
-					  final Inventory che_inv = ((ContainerBlock)b).getInventory();
-					  final Inventory inv = Bukkit.createInventory(
-						        p, che_inv.getSize(), "Chest Inventory");
-						    for (int slot = 0; slot < che_inv.getSize(); slot++) {
-						      final ItemStack it = che_inv.getItem(slot);
-						      inv.setItem(slot, it);
-						    }
-						    p.openInventory(inv);
+					  final Inventory che_inv = ((InventoryHolder)b.getState()).getInventory();
+						    p.openInventory(che_inv);
 						    p.updateInventory();	  
 				  }
 				  break;
