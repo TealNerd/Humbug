@@ -2539,6 +2539,15 @@ public class Humbug extends JavaPlugin implements Listener {
 		  }
 	  }
   }
+  
+  //there is a bug in minecraft 1.8, which allows fire and vines to spread into unloaded chunks
+  //where they can replace any existing block
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void fixSpreadInUnloadedChunks(BlockSpreadEvent e) {
+	  if (!e.getBlock().getChunk().isLoaded()) {
+		  e.setCancelled(true);
+	  }
+  }
 
   // ================================================
   // General
