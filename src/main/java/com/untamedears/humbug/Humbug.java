@@ -87,6 +87,7 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.SheepDyeWoolEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -1691,6 +1692,13 @@ public class Humbug extends JavaPlugin implements Listener {
         }
       }
     }
+  }
+  
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onPlayerEnterBed(PlayerBedEnterEvent event) {
+	  Environment env = event.getBed().getLocation().getWorld().getEnvironment();
+	  if (env == Environment.NETHER || env == Environment.THE_END)
+		  event.setCancelled(true);
   }
 
   //=================================================
