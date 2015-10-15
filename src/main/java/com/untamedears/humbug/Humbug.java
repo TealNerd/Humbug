@@ -1698,8 +1698,11 @@ public class Humbug extends JavaPlugin implements Listener {
 	  @BahHumbug(opt="disable_bed_nether_end", def="true")
   })
   @EventHandler(priority = EventPriority.HIGHEST)
-  public void onPlayerEnterBed(PlayerBedEnterEvent event) {
-	  Environment env = event.getBed().getLocation().getWorld().getEnvironment();
+  public void onPlayerEnterBed(BlockPlaceEvent event) {
+	  Block b = event.getBlock();
+	  if (!(b.getType() == Material.BED || b.getType() == Material.BED_BLOCK))
+		  return;
+	  Environment env = b.getLocation().getWorld().getEnvironment();
 	  if (config_.get("disable_bed_nether_end").getBool() && (env == Environment.NETHER || env == Environment.THE_END))
 		  event.setCancelled(true);
   }
