@@ -31,7 +31,7 @@ public class Config {
   private static final int cobble_from_lava_scan_radius_ = 0;
   private static final String find_end_portals_ = null;
   private static final int projectile_slow_ticks_ = 100;
-  private static final int loot_multiplier_ = -1;
+  private static final int loot_multiplier_ = 1;
   private static final String book_name_ = "A Guide to Civcraft";
   private static final String book_author_ = "dydomite";
   private static final String book_text_ =
