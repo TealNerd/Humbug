@@ -2748,7 +2748,7 @@ public class Humbug extends JavaPlugin implements Listener {
     config_ = Config.initialize(this);
   }
   
-  public Config getConfig() {
+  public Config getHumbugConfig() {
 	  return config_;
   }
 }

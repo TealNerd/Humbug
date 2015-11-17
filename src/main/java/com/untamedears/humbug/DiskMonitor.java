@@ -13,7 +13,7 @@ public class DiskMonitor implements Runnable {
 
 	public DiskMonitor(Humbug plugin) {
 		serverFolder = plugin.getDataFolder().getParentFile().getParentFile();
-		config = plugin.getConfig();
+		config = plugin.getHumbugConfig();
 	}
 
 	@BahHumbug(opt="disk_space_shutdown", type = OptType.Double, def = "0.02")
