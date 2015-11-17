@@ -9,7 +9,7 @@ public class DiskMonitor implements Runnable {
 	private Config config;
 
 	public DiskMonitor(Humbug plugin) {
-		serverFolder = plugin.getDataFolder().getParentFile().getParentFile();
+		serverFolder = plugin.getDataFolder().getParentFile();
 		config = plugin.getHumbugConfig();
 	}
 
