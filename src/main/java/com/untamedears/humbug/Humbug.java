@@ -2741,9 +2741,14 @@ public class Humbug extends JavaPlugin implements Listener {
 
   private void registerEvents() {
     getServer().getPluginManager().registerEvents(this, this);
+    getServer().getScheduler().scheduleSyncRepeatingTask(this, new DiskMonitor(this), 0L, 20L*60L); //once a minute
   }
 
   private void loadConfiguration() {
     config_ = Config.initialize(this);
+  }
+  
+  public Config getConfig() {
+	  return config_;
   }
 }
