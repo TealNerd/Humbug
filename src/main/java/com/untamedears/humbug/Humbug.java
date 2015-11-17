@@ -2739,6 +2739,7 @@ public class Humbug extends JavaPlugin implements Listener {
     console.addAttachment(this, "humbug.console", true);
   }
 
+  @BahHumbug(opt="disk_space_shutdown", type = OptType.Double, def = "0.02")
   private void registerEvents() {
     getServer().getPluginManager().registerEvents(this, this);
     getServer().getScheduler().scheduleSyncRepeatingTask(this, new DiskMonitor(this), 0L, 20L*60L); //once a minute
