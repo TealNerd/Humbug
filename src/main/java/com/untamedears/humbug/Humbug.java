@@ -62,6 +62,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
@@ -1867,6 +1868,24 @@ public class Humbug extends JavaPlugin implements Listener {
         }
       }
     }
+  }
+  
+  /**
+   * Because of our waterflow limiter, sometimes ice will freeze in wrong spots, so we have to correct this here
+   */
+  @EventHandler
+  public void preventWrongIce(BlockFormEvent e) {
+	  Block b = e.getBlock();
+	  if (b.getType() != Material.ICE) {
+		  return;
+	  }
+	  BlockFace [] faces = new BlockFace []{BlockFace.NORTH,BlockFace.SOUTH,BlockFace.EAST,BlockFace.WEST};
+	  for(BlockFace face : faces) {
+		  if (b.getRelative(face).getType().isSolid()) {
+			  return;
+		  }
+	  }
+	  e.setCancelled(true);
   }
 
   // ================================================
