@@ -67,6 +67,10 @@ public class Config {
       + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/humbugwiki\n}|"
       + "  {|lRealistic Biomes{|r:\n Biomes are large, crops grow different in different biomes. Hit ground with seed to see growth rate. Farms need sunlight. Crops grow with nobody around.\n"
       + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/realbiome\n}|"
+      + "  {|lArthropod Egg{|r:\n Allows you to capture passive mobs into spawn eggs using Bane of Arthropod enchantment.\n"
+      + "{|lMore Info:{|r {|oGithub Page:{|r tinyurl.com/arthrop\n}|"
+      + "  {|lBrewery{|r:\n Custom brewing of booze and more.\n"
+      + "{|lMore Info:{|r {|oBukkit Page:{|r tinyurl.com/bukkitbrewp\n}|"
       + "   {|oFurther Info{|r\n"
       + "Visit our subreddit at: {|oreddit.com/r/Devoted{|r\n}|"
       + "We extend our appreciation to the devs, admins, and players at: {|oreddit.com/r/Civcraft{|r\n";
