@@ -1326,6 +1326,33 @@ public class Humbug extends JavaPlugin implements Listener {
   }
 
   //================================================
+  // Give one-time starting kit
+
+  @BahHumbug(opt="drop_newbie_kit", def="true")
+  @EventHandler
+  public void onGiveKitOnJoin(PlayerJoinEvent event) {
+    if (!config_.get("drop_newbie_kit").getBool()) {
+      return;
+    }
+    final Player player = event.getPlayer();
+    if (player.hasPlayedBefore())
+      return;
+    }
+    final String playerName = player.getUniqueId().toString();
+    giveN00bKit(player);
+  }
+
+  public void giveN00bKit(Player player) {
+    Inventory inv = player.getInventory();
+    inv.addItem(createN00bKit());
+  }
+
+  public ItemStack createN00bKit() {
+    ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+	return book;
+  }
+
+  //================================================
   // Give introduction book to n00bs
 
   private Set<String> playersWithN00bBooks_ = new TreeSet<String>();
