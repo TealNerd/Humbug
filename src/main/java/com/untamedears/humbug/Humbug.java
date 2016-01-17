@@ -1328,14 +1328,17 @@ public class Humbug extends JavaPlugin implements Listener {
   //================================================
   // Give one-time starting kit
 
-  @BahHumbug(opt="drop_newbie_kit", def="true")
+  @BahHumbugs({
+    @BahHumbug(opt="newbie_kit"),
+    @BahHumbug(opt="drop_newbie_kit", def="true")
+  })
   @EventHandler
   public void onGiveKitOnJoin(PlayerJoinEvent event) {
     if (!config_.get("drop_newbie_kit").getBool()) {
       return;
     }
     final Player player = event.getPlayer();
-    if (player.hasPlayedBefore())
+    if (player.hasPlayedBefore()){
       return;
     }
     final String playerName = player.getUniqueId().toString();
@@ -1347,11 +1350,14 @@ public class Humbug extends JavaPlugin implements Listener {
 	ItemStack[] kit = createN00bKit();
 	if (kit != null) {
 	    inv.addItem(kit);
+		debug("Gave newbit kit to " + player.getDisplayName());
+	} else {
+		debug("Newbie kit is not set.");
 	}
   }
 
   public ItemStack[] createN00bKit() {
-    List<ItemStack> skit = config_.getStarterKit();
+    List<ItemStack> skit = config_.getStartingKit();
 	if (skit != null) {
 	    return skit.toArray(new ItemStack[0]);
 	}
@@ -2701,19 +2707,23 @@ public class Humbug extends JavaPlugin implements Listener {
       giveN00bBook(sendBookTo);
       return true;
     }
-	if (sender instanceof Player && ((Player)sender).isOp() &&
+	if (((sender instanceof Player && ((Player)sender).isOp()) ||
+		(sender instanceof ConsoleCommandSender)) &&
         command.getName().equals("introkit")) {
-      if (!config_get("drop_newbie_kit").getBool()) {
+      if (!config_.get("drop_newbie_kit").getBool()) {
         return true;
       }
-      Player sendKitTo = (Player)sender;
+      Player sendKitTo = sender instanceof Player ? (Player)sender : null;
       if (args.length >= 1) {
         Player possible = Bukkit.getPlayerExact(args[0]);
         if (possible != null) {
           sendKitTo = possible;
         }
       }
-      giveN00bKit(sendKitTo);
+      if (sendKitTo != null) {
+		info("Sending welcome kit to " + sendKitTo.getDisplayName());
+        giveN00bKit(sendKitTo);
+      }
       return true;
     }
     if (sender instanceof Player
@@ -2751,7 +2761,10 @@ public class Humbug extends JavaPlugin implements Listener {
         config_.setDebug(toBool(value));
       }
       msg = String.format("debug = %s", config_.getDebug());
-    } else if (option.equals("loot_multiplier")) {
+    } else if (option.equals("default_kit")) {
+      config_.setDefaultStartingKit();
+	  info("Default kit set");
+	}else if (option.equals("loot_multiplier")) {
       String entity_type = "generic";
       if (set && subvalue_set) {
         entity_type = value;

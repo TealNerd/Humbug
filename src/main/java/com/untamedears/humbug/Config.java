@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -345,10 +347,25 @@ public class Config {
   }
 
   public List<ItemStack> getStartingKit() {
-    if (config_.contains("newbie_kit") ) {
-      return (List<ItemStack>) config_.getList("newbie_kit");
+    List<?> bsk = config_.getList("newbie_kit");
+	if (bsk != null) {
+      return (List<ItemStack>) bsk;
 	}
 	return null;
+  }
+
+  public void setDefaultStartingKit() {
+    List<ItemStack> kit = new LinkedList<ItemStack>();
+	ItemStack def = new ItemStack(Material.getMaterial("COOKIE"), 32);
+	ItemMeta meta = def.getItemMeta();
+	meta.setDisplayName("Manna");
+	List<String> lore = new LinkedList<String>();
+	lore.add("Gift from the Admins as you");
+	lore.add("begin your journey on Devoted");
+	meta.setLore(lore);
+	def.setItemMeta(meta);
+	kit.add(def);
+	config_.set("newbie_kit", kit);
   }
 
   public void setStartingKit(List<ItemStack> kit) {
