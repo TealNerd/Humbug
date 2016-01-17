@@ -1,0 +1,12 @@
+drop_newbie_kit: true
+newbie_kit:
+ - ==: org.bukkit.inventory.ItemStack
+   type: COOKIE
+   amount: 32
+   meta:
+    ==: ItemMeta
+	meta-type: UNSPECIFIC
+	display-name: 'Manna'
+	lore:
+	 - "Gift from the Admins as you"
+	 - "begin your journey on Devotion."
