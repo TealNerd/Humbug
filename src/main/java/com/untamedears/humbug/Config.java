@@ -88,7 +88,6 @@ public class Config {
   private static final Iterable<String> compiled_holiday_book_text_ =
       Splitter.on("}|").split(holiday_book_text_.replaceAll("\\{\\|", "\u00A7"));
 
-
   private static FileConfiguration config_ = null;
 
   public static Config initialize(Humbug plugin) {
@@ -343,5 +342,16 @@ public class Config {
   
   public void tag_on_join(boolean value){
 	  config_.set("tag_on_join", value);
+  }
+
+  public List<ItemStack> getStartingKit() {
+    if (config_.contains("newbie_kit") ) {
+      return (List<ItemStack>) config_.getList("newbie_kit");
+	}
+	return null;
+  }
+
+  public void setStartingKit(List<ItemStack> kit) {
+    // TODO: unsupported atm.
   }
 }

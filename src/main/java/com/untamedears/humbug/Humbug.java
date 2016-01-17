@@ -1344,12 +1344,18 @@ public class Humbug extends JavaPlugin implements Listener {
 
   public void giveN00bKit(Player player) {
     Inventory inv = player.getInventory();
-    inv.addItem(createN00bKit());
+	ItemStack[] kit = createN00bKit();
+	if (kit != null) {
+	    inv.addItem(kit);
+	}
   }
 
-  public ItemStack createN00bKit() {
-    ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-	return book;
+  public ItemStack[] createN00bKit() {
+    List<ItemStack> skit = config_.getStarterKit();
+	if (skit != null) {
+	    return skit.toArray(new ItemStack[0]);
+	}
+	return null;
   }
 
   //================================================
@@ -2693,6 +2699,21 @@ public class Humbug extends JavaPlugin implements Listener {
         }
       }
       giveN00bBook(sendBookTo);
+      return true;
+    }
+	if (sender instanceof Player && ((Player)sender).isOp() &&
+        command.getName().equals("introkit")) {
+      if (!config_get("drop_newbie_kit").getBool()) {
+        return true;
+      }
+      Player sendKitTo = (Player)sender;
+      if (args.length >= 1) {
+        Player possible = Bukkit.getPlayerExact(args[0]);
+        if (possible != null) {
+          sendKitTo = possible;
+        }
+      }
+      giveN00bKit(sendKitTo);
       return true;
     }
     if (sender instanceof Player

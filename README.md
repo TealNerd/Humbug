@@ -214,3 +214,14 @@ Default configuration (biased for CivCraft):
 - remove_pearl_chunks: true
 - enchanting_table: false
 - disk_space_shutdown: 0.02
+
+Defines a few utility commands:
+
+/invsee <Player> to peak into an active player's main inventory.
+
+/bahhumbug <Player> gives a player a holiday package
+
+/introbook [<Player>] gives a player (or self) the intro-to-server book
+
+/introkit [<Player>] OP command to give a player (or self) the intro kit
+
