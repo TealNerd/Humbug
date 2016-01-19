@@ -4,5 +4,6 @@ public enum OptType {
   Bool,
   Double,
   Int,
-  String
+  String,
+  List
 }

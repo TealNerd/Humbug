@@ -1329,7 +1329,7 @@ public class Humbug extends JavaPlugin implements Listener {
   // Give one-time starting kit
 
   @BahHumbugs({
-    @BahHumbug(opt="newbie_kit"),
+    @BahHumbug(opt="newbie_kit", type=OptType.List),
     @BahHumbug(opt="drop_newbie_kit", def="true")
   })
   @EventHandler

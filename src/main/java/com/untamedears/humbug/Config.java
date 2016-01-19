@@ -365,10 +365,10 @@ public class Config {
 	meta.setLore(lore);
 	def.setItemMeta(meta);
 	kit.add(def);
-	config_.set("newbie_kit", kit);
+	setStartingKit(kit);
   }
 
   public void setStartingKit(List<ItemStack> kit) {
-    // TODO: unsupported atm.
+	config_.set("newbie_kit", kit);
   }
 }
