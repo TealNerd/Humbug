@@ -1917,8 +1917,8 @@ public class Humbug extends JavaPlugin implements Listener {
    */
   @EventHandler
   public void preventWrongIce(BlockFormEvent e) {
-	  Block b = e.getToBlock();
-	  if (b.getType() != Material.ICE) {
+	  Block b = e.getBlock();
+	  if (e.getNewState().getType() != Material.ICE) {
 		  return;
 	  }
 	  BlockFace [] faces = new BlockFace []{BlockFace.NORTH,BlockFace.SOUTH,BlockFace.EAST,BlockFace.WEST};
