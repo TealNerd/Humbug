@@ -1318,7 +1318,7 @@ public class Humbug extends JavaPlugin implements Listener {
     Bukkit.getScheduler().runTaskLater(this, new Runnable() {
       @Override
       public void run() {
-    	  if (loginPlayer == null)
+    	  if (loginPlayer == null || combatTag_ == null)
     		  return;
     	  combatTag_.tagPlayer(loginPlayer.getName());
     	  loginPlayer.sendMessage("You have been Combat Tagged on Login");
