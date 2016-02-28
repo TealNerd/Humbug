@@ -1742,8 +1742,12 @@ public class Humbug extends JavaPlugin implements Listener {
 	  Block b = event.getBlock();
 	  if (!(b.getType() == Material.BED || b.getType() == Material.BED_BLOCK))
 		  return;
+	  if (!config_.get("disable_bed_nether_end").getBool())
+          return;
 	  Environment env = b.getLocation().getWorld().getEnvironment();
-	  if (config_.get("disable_bed_nether_end").getBool() && (env == Environment.NETHER || env == Environment.THE_END))
+	  Biome biome = b.getLocation().getBlock().getBiome();
+	  if (env == Environment.NETHER || env == Environment.THE_END || 
+		  Biome.HELL == biome || Biome.SKY == biome)
 		  event.setCancelled(true);
   }
 
