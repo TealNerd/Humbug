@@ -4,6 +4,8 @@ import com.untamedears.humbug.Config;
 import com.untamedears.humbug.annotations.BahHumbug;
 import com.untamedears.humbug.annotations.OptType;
 
+import java.util.List;
+
 public class ConfigOption {
   private final String name_;
   private final OptType type_;
@@ -41,6 +43,9 @@ public class ConfigOption {
       case String:
         set(Config.getStorage().getString(name_, (String)value_));
         break;
+      case List:
+        set(Config.getStorage().getList(name_));
+		break;
       default:
         throw new Error("Unknown OptType");
     }
@@ -73,6 +78,8 @@ public class ConfigOption {
           return (String)defaultValue;
         }
         return value;
+      case List:
+        return null;
       default:
         throw new Error("Unknown OptType");
     }
@@ -104,6 +111,16 @@ public class ConfigOption {
         if (!(value instanceof Double)) {
           throw new Error(String.format(
               "Value set is not a Double for %s: %s",
+              name_, value.toString()));
+        }
+        value_ = value;
+        break;
+	  case List:
+        if (value == null) {
+          throw new Error("Value set is null for " + name_);
+        } else if (!(value instanceof List)) {
+          throw new Error(String.format(
+              "Value set is not a List for %s: %s",
               name_, value.toString()));
         }
         value_ = value;

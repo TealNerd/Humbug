@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -31,49 +33,49 @@ public class Config {
   private static final int cobble_from_lava_scan_radius_ = 0;
   private static final String find_end_portals_ = null;
   private static final int projectile_slow_ticks_ = 100;
-  private static final int loot_multiplier_ = -1;
-  private static final String book_name_ = "A Guide to Civcraft";
-  private static final String book_author_ = "dydomite";
+  private static final int loot_multiplier_ = 1;
+  private static final String book_name_ = "Welcome to Devoted";
+  private static final String book_author_ = "Bonkill";
   private static final String book_text_ =
-      "    {|oWhat is CivCraft?\n"
-      + "\"Civcraft is an experiment for communities & political ideologies [...] to work together to create and shape civilization or to watch it fall\"{|r\n"
-      + "-Ttk2, server owner\n}|"
-      + "    {|oWhat is CivCraft?{|r\n"
-      + "{|lNOT just survival{|r Admins are hands-off and only handle glitches and hackers\n"
-      + "{|lNOT just chaos{|r Mods allow players and towns to enforce their own rules\n"
-      + "{|lNOT just roleplay{|r Nobody pretends -- conflict is genuine and heated\n}|"
+      "    {|oWhat is Devoted?\n"
+      + "\"A new type of Minecraft server built towards providing a competitive, high stakes, immersive experience controlled by the players.\"{|r\n"
+      + "-ShadedJon, server owner\n}|"
+      + "    {|oWhat is Devoted?{|r\n"
+      + "{|lNOT just survival{|r\nAdmins are hands-off and only handle glitches and hackers\n"
+      + "{|lNOT just chaos{|r\nMods allow players and towns to enforce their own rules\n"
+      + "{|lNOT just roleplay{|r\nNobody pretends -- conflict is genuine and heated\n}|"
       + "    {|oBasic Mechanics{|r\n"
-      + "-The world is a circle\n"
-      + "-Stretches 15k blocks\n"
-      + "-500 block chat range\n"
+      + "-The world is a series of islands\n"
+      + "-They're seperated by ocean.\n"
+      + "-Limited chat range\n"
       + "-Respawn in random area unless you sleep\n"
       + "-Food grows slowly\n"
       + "-Mobs spawn sparsely\n"
-      + "-No Nether portals\n"
-      + "-Nether biomes instead\n"
-      + "-No XP from killing\n}|"
-      + "   {|oCivCraft Mods{|r\n"
-      + "{|lCitadel{|r: Reinforces things so it takes numerous breaks to destroy them. Locks some things too.\n"
+      + "-Vanilla Nether\n"
+      + "-Ore veins and vanilla ore spawning.\n}|"
+      + "   {|oDevoted Mods{|r\n"
+      + "   {|lCitadel{|r:\n Reinforces things so it takes numerous breaks to destroy them. Locks some things too.\n"
       + "{|lMore Info:{|r {|oVisual Guide:{|r imgur.com/BnlL2 {|oWiki Page:{|r tinyurl.com/citadelmod\n"
       + "{|oType \"/help citadel\" in chat to get commands\n}|"
-      + "   {|lPrison Pearl{|r: Ender Pearls trap players in the end. Others can steal back your pearl and free you -- you always know where it is so they cannot hide it\n"
+      + "   {|lPrison Pearl{|r:\n Ender Pearls trap players in the end. Others can steal back your pearl and free you -- you always know where it is so they cannot hide it\n"
       + "{|lMore Info:{|r {|oVisual Guide:{|r imgur.com/XbhkK {|oWiki Page:{|r tinyurl.com/prisperl\n}|"
-      + "   {|lJuke Alert{|r: Creates 'Juke' blocks that record player activity in radius. If you steal, grief, or trespass -- people will know about it & put a bounty for you to be pearled.\n"
+      + "   {|lJuke Alert{|r:\n Creates 'Juke' blocks that record player activity in radius. If you steal, grief, or trespass -- people will know about it & put a bounty for you to be pearled.\n"
       + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/snitchblock\n}|"
-      + "   {|lMusterCull{|r: Kills some of your farm animals when there's too many to decrease lag. Mob spawners stop spawning if there are too many mobs around -- grinders must be cleared a lot.\n"
-      + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/mustercull\n}|"
-      + "   {|lItem Exchange{|r: It's a minecraft shop mod that enables different chests (and other inventory blocks) to perform an exchange of items with a player.\n"
+      + "   {|lMythicMobs{|r:\n Some custom mobs to increase the risk and thrill on specific islands and areas throughout Devoted.\n"
+      + "{|lMore Info:{|r {|oBukkit Page:{|r dev.bukkit.org/bukkit-plugins/mythicmobs\n}|"
+      + "   {|lItem Exchange{|r:\n It's a minecraft shop mod that enables different chests (and other inventory blocks) to perform an exchange of items with a player.\n"
       + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/itemxchng\n}|"
-      + "   {|lHumbug:{|r Disables some features of minecraft -- see wiki for short list. Please read it to ensure you don't waste resources on a useless block.\n"
+      + "   {|lHumbug{|r:\n Disables some features of minecraft -- see wiki for short list. Please read it to ensure you don't waste resources on a useless block.\n"
       + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/humbugwiki\n}|"
-      + "   {|lFactory Mod{|r: Factories are hard to create but can mass produce goods for cheaper. Gives groups gear advantages over lone wolves. Trading may be cheaper than crafting due to this.\n"
-      + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/factorymod\n}|"
-      + "   {|lRealistic Biomes{|r: Biomes are huge, crops grow different in different biomes. Hit ground with seed to see growth rate. Farms need sunlight. Crops grow with nobody around.\n"
+      + "  {|lRealistic Biomes{|r:\n Biomes are large, crops grow different in different biomes. Hit ground with seed to see growth rate. Farms need sunlight. Crops grow with nobody around.\n"
       + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/realbiome\n}|"
+      + "  {|lArthropod Egg{|r:\n Allows you to capture passive mobs into spawn eggs using Bane of Arthropod enchantment.\n"
+      + "{|lMore Info:{|r {|oGithub Page:{|r tinyurl.com/arthrop\n}|"
+      + "  {|lBrewery{|r:\n Custom brewing of booze and more.\n"
+      + "{|lMore Info:{|r {|oBukkit Page:{|r tinyurl.com/bukkitbrewp\n}|"
       + "   {|oFurther Info{|r\n"
-      + "Visit our subreddit at: {|oreddit.com/r/civcraft{|r\n"
-      + "Visit the unofficial wiki: {|oCivCraft.org{|r\n"
-      + "Both have player made guides on other mods, towns, and general tips";
+      + "Visit our subreddit at: {|oreddit.com/r/Devoted{|r\n}|"
+      + "We extend our appreciation to the devs, admins, and players at: {|oreddit.com/r/Civcraft{|r\n";
   private static final Iterable<String> compiled_book_text_ =
       Splitter.on("}|").split(book_text_.replaceAll("\\{\\|", "\u00A7"));
 
@@ -87,7 +89,6 @@ public class Config {
       + "-Santa Ttk2 and the Admin Elves";
   private static final Iterable<String> compiled_holiday_book_text_ =
       Splitter.on("}|").split(holiday_book_text_.replaceAll("\\{\\|", "\u00A7"));
-
 
   private static FileConfiguration config_ = null;
 
@@ -343,5 +344,31 @@ public class Config {
   
   public void tag_on_join(boolean value){
 	  config_.set("tag_on_join", value);
+  }
+
+  public List<ItemStack> getStartingKit() {
+    List<?> bsk = config_.getList("newbie_kit");
+	if (bsk != null) {
+      return (List<ItemStack>) bsk;
+	}
+	return null;
+  }
+
+  public void setDefaultStartingKit() {
+    List<ItemStack> kit = new LinkedList<ItemStack>();
+	ItemStack def = new ItemStack(Material.getMaterial("COOKIE"), 32);
+	ItemMeta meta = def.getItemMeta();
+	meta.setDisplayName("Manna");
+	List<String> lore = new LinkedList<String>();
+	lore.add("Gift from the Admins as you");
+	lore.add("begin your journey on Devoted");
+	meta.setLore(lore);
+	def.setItemMeta(meta);
+	kit.add(def);
+	setStartingKit(kit);
+  }
+
+  public void setStartingKit(List<ItemStack> kit) {
+	config_.set("newbie_kit", kit);
   }
 }

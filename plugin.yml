@@ -1,10 +1,10 @@
-name: Humbug
+name: ${project.name}
 main: com.untamedears.humbug.Humbug
-version: 1.6.1
-softdepend: [CombatTag]
+version: ${project.version}
+softdepend: [CombatTag, CombatTagPlus]
 description: toggles various functionality
 author: erocs
-authors: [ProgrammerDan]
+authors: [ProgrammerDan, rourke750]
 database: false
 commands:
   humbug:
@@ -15,6 +15,10 @@ commands:
     description: Creates the intro book for new players
     usage: /introbook [<playerName>]
     permission: humbug.admin.introbook
+  introkit:
+    description: Creates an intro kit for new players
+    usage: /introkit [<playerName>]
+    permission: humbug.admin.introkit
   bahhumbug:
     description: Creates a holiday package
     usage: /bahhumbug
@@ -31,9 +35,13 @@ permissions:
     description: Admin commands for Humbug
     default: op
     children:
+      humbug.admin.introkit: true
       humbug.admin.introbook: true
       humbug.admin.bahhumbug: true
       humbug.admin.invsee: true
+  humbug.admin.introkit:
+    description: Access to the /introkit command
+    default: false
   humbug.admin.introbook:
     description: Access to the /introbook command
     default: false
