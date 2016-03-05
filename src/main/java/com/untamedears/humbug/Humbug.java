@@ -1531,6 +1531,73 @@ public class Humbug extends JavaPlugin implements Listener {
       }
     }
   }
+  
+  @BahHumbug(opt="drop_ores_as_ore", def="true")
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+  public void orebreak(BlockBreakEvent e) {
+	  if(!config_.get("drop_ores_as_ore").getBool()) {
+		  return;
+	  }
+	  if (isOre(e.getBlock().getType())) {
+		  e.setCancelled(true);
+		  Block b = e.getBlock();
+		  Material m = b.getType();
+		  if (m == Material. GLOWING_REDSTONE_ORE) {
+			  m = Material.REDSTONE_ORE;
+		  }
+		  b.setType(Material.AIR);
+		  b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(m));
+	  }
+  }
+  
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) 
+	  public void oreExplode(EntityExplodeEvent e) {
+		  if(!config_.get("drop_ores_as_ore").getBool()) {
+			  return;
+		  }
+		  Iterator<Block> i = e.blockList().iterator();
+	        while(i.hasNext()) {
+	            Block b = i.next();
+	            if (!isOre(b.getType())) {
+	            	continue;
+	            }
+	  		  	Material m = b.getType();
+	  		  	if (m == Material. GLOWING_REDSTONE_ORE) {
+	  		  		m = Material.REDSTONE_ORE;
+	  		  	}
+	            i.remove();
+	            b.setType(Material.AIR);   
+	            if(prng_.nextFloat() <= e.getYield()) {
+	            	b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(m));
+	            }
+	        }
+	 
+  }
+  
+
+  
+  private boolean isOre(Material m) {
+	 switch (m) {
+	 case DIAMOND_ORE: case EMERALD_ORE: case COAL_ORE: case IRON_ORE: case GOLD_ORE:
+	 case REDSTONE_ORE: case GLOWING_REDSTONE_ORE: case QUARTZ_ORE: case LAPIS_ORE:
+		 return true;
+	 default: return false;
+	 }
+  }
+  
+  private void damageTool(ItemStack is) {
+	  Material m = is.getType();
+	  if (m != Material.DIAMOND_PICKAXE && m != Material.IRON_AXE && m != Material.WOOD_PICKAXE && 
+			  m != Material.GOLD_PICKAXE && m != Material.STONE_PICKAXE && m != Material.WOOD_PICKAXE) {
+		  return;
+	  }
+	  if(is.getDurability() >= is.getType().getMaxDurability()) {
+          is.setAmount(0);
+      }
+      if(prng_.nextInt(is.getEnchantmentLevel(Enchantment.DURABILITY) + 1) == 0) {
+          is.setDurability((short) (is.getDurability() + 1));
+      }
+  }
 
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
   public void onBlockFromToEvent(BlockFromToEvent e) {
