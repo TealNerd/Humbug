@@ -1547,6 +1547,10 @@ public class Humbug extends JavaPlugin implements Listener {
 		  }
 		  b.setType(Material.AIR);
 		  b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(m));
+		  Location loc = b.getLocation();
+		  getLogger().info(e.getPlayer().getName() + " broke a " + m.toString() " at " + loc.getWorld.getName() + " " +
+		  loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
+		  
 	  }
   }
   
