@@ -517,7 +517,7 @@ public class Humbug extends JavaPlugin implements Listener {
       try {
         final ItemStack item = inv.getItem(i);
         if (item != null) {
-          world.dropItemNaturally(loc, item);
+        	dropItemAtLocation(loc, item);
           inv.clear(i);
         }
       } catch (Exception ex) {}
@@ -560,7 +560,7 @@ public class Humbug extends JavaPlugin implements Listener {
     {
       e.setCancelled(true);
       e.getBlock().setType(Material.AIR);
-      e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.QUARTZ, 1));
+      dropItemAtLocation(e.getBlock().getLocation(), new ItemStack(Material.QUARTZ, 1));
     }
   }
 
@@ -1546,7 +1546,7 @@ public class Humbug extends JavaPlugin implements Listener {
 			  m = Material.REDSTONE_ORE;
 		  }
 		  b.setType(Material.AIR);
-		  b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(m));
+		  dropItemAtLocation(b.getLocation(), new ItemStack(m));
 		  Location loc = b.getLocation();
 		  getLogger().info(e.getPlayer().getName() + " broke a " + m.toString() + " at " + loc.getWorld().getName() + " " +
 		  loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
@@ -1572,7 +1572,7 @@ public class Humbug extends JavaPlugin implements Listener {
 	            i.remove();
 	            b.setType(Material.AIR);   
 	            if(prng_.nextFloat() <= e.getYield()) {
-	            	b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(m));
+	            	dropItemAtLocation(b.getLocation(), new ItemStack(m));
 	            }
 	        }
 	 
@@ -1588,6 +1588,45 @@ public class Humbug extends JavaPlugin implements Listener {
 	 default: return false;
 	 }
   }
+  
+  
+
+
+
+	/**
+	 * A better version of dropNaturally that mimics normal drop behavior.
+	 * 
+	 * The built-in version of Bukkit's dropItem() method places the item at the block 
+	 * vertex which can make the item jump around. 
+	 * This method places the item in the middle of the block location with a slight 
+	 * vertical velocity to mimic how normal broken blocks appear.
+	 * @param l The location to drop the item
+	 * @param is The item to drop
+	 * 
+	 * @author GordonFreemanQ
+	 */
+	public void dropItemAtLocation(final Location l, final ItemStack is) {
+		
+		// Schedule the item to drop 1 tick later
+		Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+			@Override
+			public void run() {
+				l.getWorld().dropItem(l.add(0.5, 0.5, 0.5), is).setVelocity(new Vector(0, 0.05, 0));
+			}
+		}, 1);
+	}
+	
+	
+	/**
+	 * Overload for dropItemAtLocation(Location l, ItemStack is) that accepts a block parameter.
+	 * @param b The block to drop it at
+	 * @param is The item to drop
+	 * 
+	 * @author GordonFreemanQ
+	 */
+	public void dropItemAtLocation(Block b, ItemStack is) {
+		dropItemAtLocation(b.getLocation(), is);
+	}
   
   private void damageTool(ItemStack is) {
 	  Material m = is.getType();
