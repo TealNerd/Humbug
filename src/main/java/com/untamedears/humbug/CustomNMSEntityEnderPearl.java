@@ -1,9 +1,9 @@
 package com.untamedears.humbug;
 
-import net.minecraft.server.v1_8_R3.EntityEnderPearl;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import net.minecraft.server.v1_8_R3.World;
+import net.minecraft.server.v1_9_R1.EntityEnderPearl;
+import net.minecraft.server.v1_9_R1.EntityLiving;
+import net.minecraft.server.v1_9_R1.NBTTagCompound;
+import net.minecraft.server.v1_9_R1.World;
 
 import org.bukkit.Bukkit;
 
@@ -29,12 +29,12 @@ public class CustomNMSEntityEnderPearl extends EntityEnderPearl {
     y_adjust_ = gravity;
   }
 
-  protected float m() {
+  protected float j() {
     return (float)y_adjust_;
   }
 
-  public void t_() {
-    super.t_();
+  public void m() {
+    super.m();
     if (tick_==0) {
       startDeltaX_ = motX;
       startDeltaY_ = motY;

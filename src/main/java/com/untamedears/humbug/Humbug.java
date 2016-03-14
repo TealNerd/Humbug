@@ -16,12 +16,12 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_8_R3.EntityEnderPearl;
-import net.minecraft.server.v1_8_R3.EntityTypes;
-import net.minecraft.server.v1_8_R3.Item;
-import net.minecraft.server.v1_8_R3.ItemEnderPearl;
-import net.minecraft.server.v1_8_R3.MinecraftKey;
-import net.minecraft.server.v1_8_R3.RegistryID;
+import net.minecraft.server.v1_9_R1.EntityEnderPearl;
+import net.minecraft.server.v1_9_R1.EntityTypes;
+import net.minecraft.server.v1_9_R1.Item;
+import net.minecraft.server.v1_9_R1.ItemEnderPearl;
+import net.minecraft.server.v1_9_R1.MinecraftKey;
+import net.minecraft.server.v1_9_R1.RegistryID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,7 +34,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Hopper;
 import org.bukkit.command.Command;
