@@ -517,7 +517,7 @@ public class Humbug extends JavaPlugin implements Listener {
       try {
         final ItemStack item = inv.getItem(i);
         if (item != null) {
-          world.dropItemNaturally(loc, item);
+        	dropItemAtLocation(loc, item);
           inv.clear(i);
         }
       } catch (Exception ex) {}
@@ -560,7 +560,7 @@ public class Humbug extends JavaPlugin implements Listener {
     {
       e.setCancelled(true);
       e.getBlock().setType(Material.AIR);
-      e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.QUARTZ, 1));
+      dropItemAtLocation(e.getBlock().getLocation(), new ItemStack(Material.QUARTZ, 1));
     }
   }
 
@@ -1569,6 +1569,116 @@ public class Humbug extends JavaPlugin implements Listener {
           e.setCancelled(true);
       }
     }
+  }
+  
+  @BahHumbug(opt="drop_ores_as_ore", def="true")
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+  public void orebreak(BlockBreakEvent e) {
+	  if(!config_.get("drop_ores_as_ore").getBool()) {
+		  return;
+	  }
+	  if (isOre(e.getBlock().getType())) {
+		  e.setCancelled(true);
+		  Block b = e.getBlock();
+		  Material m = b.getType();
+		  if (m == Material. GLOWING_REDSTONE_ORE) {
+			  m = Material.REDSTONE_ORE;
+		  }
+		  b.setType(Material.AIR);
+		  dropItemAtLocation(b.getLocation(), new ItemStack(m));
+		  Location loc = b.getLocation();
+		  getLogger().info(e.getPlayer().getName() + " broke a " + m.toString() + " at " + loc.getWorld().getName() + " " +
+		  loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
+		  
+	  }
+  }
+  
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) 
+	  public void oreExplode(EntityExplodeEvent e) {
+		  if(!config_.get("drop_ores_as_ore").getBool()) {
+			  return;
+		  }
+		  Iterator<Block> i = e.blockList().iterator();
+	        while(i.hasNext()) {
+	            Block b = i.next();
+	            if (!isOre(b.getType())) {
+	            	continue;
+	            }
+	  		  	Material m = b.getType();
+	  		  	if (m == Material. GLOWING_REDSTONE_ORE) {
+	  		  		m = Material.REDSTONE_ORE;
+	  		  	}
+	            i.remove();
+	            b.setType(Material.AIR);   
+	            if(prng_.nextFloat() <= e.getYield()) {
+	            	dropItemAtLocation(b.getLocation(), new ItemStack(m));
+	            }
+	        }
+	 
+  }
+  
+
+  
+  private boolean isOre(Material m) {
+	 switch (m) {
+	 case DIAMOND_ORE: case EMERALD_ORE: case COAL_ORE: case IRON_ORE: case GOLD_ORE:
+	 case REDSTONE_ORE: case GLOWING_REDSTONE_ORE: case QUARTZ_ORE: case LAPIS_ORE:
+		 return true;
+	 default: return false;
+	 }
+  }
+  
+  
+
+
+
+	/**
+	 * A better version of dropNaturally that mimics normal drop behavior.
+	 * 
+	 * The built-in version of Bukkit's dropItem() method places the item at the block 
+	 * vertex which can make the item jump around. 
+	 * This method places the item in the middle of the block location with a slight 
+	 * vertical velocity to mimic how normal broken blocks appear.
+	 * @param l The location to drop the item
+	 * @param is The item to drop
+	 * 
+	 * @author GordonFreemanQ
+	 */
+	public void dropItemAtLocation(final Location l, final ItemStack is) {
+		
+		// Schedule the item to drop 1 tick later
+		Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+			@Override
+			public void run() {
+				l.getWorld().dropItem(l.add(0.5, 0.5, 0.5), is).setVelocity(new Vector(0, 0.05, 0));
+			}
+		}, 1);
+	}
+	
+	
+	/**
+	 * Overload for dropItemAtLocation(Location l, ItemStack is) that accepts a block parameter.
+	 * @param b The block to drop it at
+	 * @param is The item to drop
+	 * 
+	 * @author GordonFreemanQ
+	 */
+	public void dropItemAtLocation(Block b, ItemStack is) {
+		dropItemAtLocation(b.getLocation(), is);
+	}
+  
+  private void damageTool(ItemStack is) {
+	  Material m = is.getType();
+	  if (m != Material.DIAMOND_PICKAXE && m != Material.IRON_AXE && m != Material.WOOD_PICKAXE && 
+			  m != Material.GOLD_PICKAXE && m != Material.STONE_PICKAXE && m != Material.WOOD_PICKAXE) {
+		  return;
+	  }
+	  if(is.getDurability() >= is.getType().getMaxDurability()) {
+          is.setAmount(0);
+      }
+      if(prng_.nextInt(is.getEnchantmentLevel(Enchantment.DURABILITY) + 1) == 0) {
+          is.setDurability((short) (is.getDurability() + 1));
+      }
   }
 
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
