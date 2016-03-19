@@ -51,6 +51,9 @@ Minecraft server plug-in: Simply toggles various functionality
 - Adds options to sanitize signs on placement
 - Adds option to sanitize existing signs in chunks
 
+1.9 Feature Alterations:
+- Disable Chorus Fruit teleportation
+
 The 'humbug' console command can be used to get or set any of the configuration file settings while the server is running. Also available are 'humbug save' and 'humbug reload'.
 
 Config file settings:
@@ -214,6 +217,7 @@ Default configuration (biased for CivCraft):
 - remove_pearl_chunks: true
 - enchanting_table: false
 - disk_space_shutdown: 0.02
+- disable_chorus_fruit: true
 
 Defines a few utility commands:
 
