@@ -53,6 +53,7 @@ Minecraft server plug-in: Simply toggles various functionality
 
 1.9 Feature Alterations:
 - Disable Chorus Fruit teleportation
+- Disable Elytra use
 
 The 'humbug' console command can be used to get or set any of the configuration file settings while the server is running. Also available are 'humbug save' and 'humbug reload'.
 
@@ -136,6 +137,8 @@ Config file settings:
 - remove_pearl_chunks: Boolean, removes dropped Ender Pearls when a chunk unloads (ties into PrisonPearl)
 - enchanting_table: Boolean, disables enchanting tables
 - disk_space_shutdown: Double, percentage of disk space that, if less then this mark is available, triggers an orderly server shutdown
+- disable_chorus_fruit: Boolean, disables teleportation using chorus fruit
+- disable_elytra: Boolean, disables mounting or dismounting from elytra
 
 Default configuration (biased for CivCraft):
 - debug: false
@@ -218,6 +221,7 @@ Default configuration (biased for CivCraft):
 - enchanting_table: false
 - disk_space_shutdown: 0.02
 - disable_chorus_fruit: true
+- disable_elytra: true
 
 Defines a few utility commands:
 

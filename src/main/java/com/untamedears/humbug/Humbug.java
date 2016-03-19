@@ -85,6 +85,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.SheepDyeWoolEvent;
+import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
@@ -1843,19 +1844,32 @@ public class Humbug extends JavaPlugin implements Listener {
     }
   }
 
-  @BahHumbugs({
-	  @BahHumbug(opt="disable_chorus_fruit", def="true")
-  })
+//===========================================
+// 1.9 humbugs
+
+  @BahHumbug(opt="disable_chorus_fruit", def="true")
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onPlayerTeleport(PlayerTeleportEvent event) {
-	  if(!config_.get("disable_chorus_fruit").getBool()) {
-		  return;
-	  }
-	  if(event.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)) {
-		  event.setCancelled(true);
-	  }
+    if(!config_.get("disable_chorus_fruit").getBool()) {
+      return;
+    }
+    if(event.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)) {
+      event.setCancelled(true);
+    }
   }
-  
+
+  @BahHumbug(opt="disable_elytra", def="true")
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onPlayerHavingAnyFun(EntityToggleGlideEvent event) {
+    if (!config_.get("disable_elytra").getBool()) {
+      return;
+    }
+    event.setCancelled(true);
+  }
+
+//==========================================
+// nether humbug
+
   @BahHumbugs({
 	  @BahHumbug(opt="disable_bed_nether_end", def="true")
   })
