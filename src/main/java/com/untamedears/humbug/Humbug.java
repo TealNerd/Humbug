@@ -2783,9 +2783,7 @@ public class Humbug extends JavaPlugin implements Listener {
     registerTimerForPearlCheck();
     global_instance_ = this;
     info("Enabled");
-    if (Bukkit.getPluginManager().getPlugin("CombatTag") != null)
-    	combatTag_ = new CombatTagManager();
-    else if (Bukkit.getPluginManager().getPlugin("CombatTagPlus") != null)
+    if (Bukkit.getPluginManager().getPlugin("CombatTagPlus") != null)
     	combatTag_ = new CombatTagPlusManager();
   }
   
