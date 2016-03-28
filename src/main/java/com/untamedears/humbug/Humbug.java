@@ -86,6 +86,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.SheepDyeWoolEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
@@ -118,6 +119,7 @@ import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -2695,6 +2697,45 @@ public class Humbug extends JavaPlugin implements Listener {
 	  if (!e.getBlock().getChunk().isLoaded()) {
 		  e.setCancelled(true);
 	  }
+  }
+  
+  //disable strength2 potions by disallowing players to click them
+  @BahHumbug(opt="disable_strength2", def="true")
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+  public void itemClick(InventoryClickEvent e) {
+	  if (!config_.get("disable_strength2").getBool()) {
+	      return;
+	  }
+	  if (isStrength2Pot(e.getCurrentItem())) {
+		  e.setCancelled(true);
+	  }
+  }
+  
+  //disable drinking strength2
+  public void drinkingPotion(PlayerItemConsumeEvent e) {
+	  if (!config_.get("disable_strength2").getBool()) {
+	      return;
+	  }
+	  if (isStrength2Pot(e.getItem())) {
+		  e.setCancelled(true);
+	  }
+  }
+  
+  public boolean isStrength2Pot(ItemStack is) {
+	  if (is == null) {
+		  return false;
+	  }
+	  if (is.getType() == Material.POTION){
+		  PotionMeta pm = ((PotionMeta)is.getItemMeta());
+		  if (pm.hasCustomEffects()) {
+			  for(PotionEffect pe: pm.getCustomEffects()) {
+				  if (pe.getType() == PotionEffectType.INCREASE_DAMAGE && pe.getAmplifier() == 1) {
+					  return true;
+				  }
+			  }
+		  }
+	  }
+	  return false;
   }
 
   // ================================================
