@@ -2725,6 +2725,15 @@ public class Humbug extends JavaPlugin implements Listener {
 	  }
   }
   
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+  public void strength2Splash(PotionSplashEvent e) {
+	  if (isStrength2Pot(e.getEntity().getItem())) {
+		  for(LivingEntity le : e.getAffectedEntities()) {
+			  e.setIntensity(le, 0.0);
+		  }
+	  }
+  }
+  
   public boolean isStrength2Pot(ItemStack is) {
 	  if (is == null) {
 		  return false;
@@ -2734,6 +2743,7 @@ public class Humbug extends JavaPlugin implements Listener {
 	  }
 	  return false;
   }
+
   
 
   // ================================================
