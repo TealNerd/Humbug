@@ -34,8 +34,8 @@ public class Config {
   private static final String find_end_portals_ = null;
   private static final int projectile_slow_ticks_ = 100;
   private static final int loot_multiplier_ = 1;
-  private static final String book_name_ = "Welcome to Devoted";
-  private static final String book_author_ = "Bonkill";
+  private static final String book_name_ = "Welcome to Civcraft";
+  private static final String book_author_ = "ttk2";
   private static final String book_text_ =
 	      "    {|oWhat is CivCraft?\n"
 	      + "\"Civcraft is an experiment for communities & political ideologies [...] to work together to create and shape civilization or to watch it fall\"{|r\n"
@@ -45,12 +45,12 @@ public class Config {
 	      + "{|lNOT just chaos{|r Mods allow players and towns to enforce their own rules\n"
 	      + "{|lNOT just roleplay{|r Nobody pretends -- conflict is genuine and heated\n}|"
 	      + "    {|oBasic Mechanics{|r\n"
-	      + "-The world is a circle\n"
-	      + "-Stretches 15k blocks\n"
+	      + "-The world is a series of circular shards\n"
+	      + "-Each stretches 5-6k blocks\n"
+		  + "-Connected by World Border portals\n"
 	      + "-500 block chat range\n"
 	      + "-Respawn in random area unless you sleep\n"
 	      + "-Food grows slowly\n"
-	      + "-Mobs spawn sparsely\n"
 	      + "-No Nether portals\n"
 	      + "-Nether biomes instead\n"
 	      + "-No XP from killing\n}|"
@@ -358,10 +358,10 @@ public class Config {
     List<ItemStack> kit = new LinkedList<ItemStack>();
 	ItemStack def = new ItemStack(Material.getMaterial("COOKIE"), 32);
 	ItemMeta meta = def.getItemMeta();
-	meta.setDisplayName("Manna");
+	meta.setDisplayName("Chocolate-chip Cookie");
 	List<String> lore = new LinkedList<String>();
-	lore.add("Gift from the Admins as you");
-	lore.add("begin your journey on Devoted");
+	lore.add("Gift from TTK2 as you");
+	lore.add("begin your journey on Civcraft");
 	meta.setLore(lore);
 	def.setItemMeta(meta);
 	kit.add(def);

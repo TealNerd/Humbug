@@ -37,6 +37,8 @@ Minecraft server plug-in: Simply toggles various functionality
 - Prevents end portal tiles from being destroyed
 - Prevents inventories, not your own, from being opened while in vehicles
 - Prevents container carts from being opened
+- Optionally prevents boats from running on land
+- Optionally prevents players from destroying their own boat
 - Give projectiles a slow debuff on hit
 - Multiplies mob death loot item count
 - Disables experience except from XP bottles
@@ -110,6 +112,8 @@ Config file settings:
 - nerf_strength: Boolean, Nerfs the strength potion back to pre-1.5 mechanics
 - buff_health_pots: Boolean, Buffs the health potion back to pre-1.5 mechanics
 - horse_speed: Double, Sets the base movement speed of all mounted horses. This is MineCraft's adjustment ratio. The default 0.17 is just slower than a minecart.
+- prevent_self_boat_break: Boolean, prevents players from breaking their own boats (kicks the offending player)
+- prevent_land_boats: Boolean, check if a boat is over water and cancel motion if it isn't
 - fix_minecart_reenter_bug: Boolean, Fixes the minecart re-enter bug where players in a destroyed minecart could fall through the world
 - strength_multiplier: Integer, multiplier for added damage from strength potion levels.
 - hunger_slowdown: Integer, amount of saturation to give a player when they lose a point of hunger
@@ -193,6 +197,8 @@ Default configuration (biased for CivCraft):
 - nerf_strength: true
 - buff_health_pots: true
 - horse_speed: 0.17
+- prevent_self_boat_break: true
+- prevent_land_boats: true
 - fix_minecart_reenter_bug: true
 - strength_multiplier: 3
 - hunger_slowdown: 0.0

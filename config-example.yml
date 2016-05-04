@@ -1,4 +1,4 @@
-drop_newbie_kit: true
+drop_newbie_kit: false
 newbie_kit:
  - ==: org.bukkit.inventory.ItemStack
    type: COOKIE
@@ -6,7 +6,7 @@ newbie_kit:
    meta:
     ==: ItemMeta
 	meta-type: UNSPECIFIC
-	display-name: 'Manna'
+	display-name: 'Chocolate-Chip Cookie'
 	lore:
 	 - "Gift from the Admins as you"
-	 - "begin your journey on Devotion."
+	 - "begin your journey on Civcraft."

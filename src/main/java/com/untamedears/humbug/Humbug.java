@@ -2391,7 +2391,7 @@ public class Humbug extends JavaPlugin implements Listener {
   }
 
   // ================================================
-  // Adjust ender pearl gravity
+  // Adjust ender pearl gravity -- TODO: Forgot to check if this all works still. Woops.
 
   public final static int pearlId = 368;
   public final static MinecraftKey pearlKey = new MinecraftKey("ender_pearl");
@@ -2463,7 +2463,7 @@ public class Humbug extends JavaPlugin implements Listener {
   }
 
   // ================================================
-  // Hunger Changes
+  // Hunger Changes - this code never worked previously. Fixed it, sort of.
 
   // Keep track if the player just ate.
   private Map<Player, Double> playerLastEat_ = new HashMap<Player, Double>();
@@ -2482,48 +2482,70 @@ public class Humbug extends JavaPlugin implements Listener {
     switch(mat) {
       case APPLE:
         playerLastEat_.put(player, multiplier*2.4);
+        break;
       case BAKED_POTATO:
         playerLastEat_.put(player, multiplier*7.2);
+        break;
       case BREAD:
         playerLastEat_.put(player, multiplier*6);
+        break;
       case CAKE:
         playerLastEat_.put(player, multiplier*0.4);
+        break;
       case CARROT_ITEM:
         playerLastEat_.put(player, multiplier*4.8);
+        break;
       case COOKED_FISH:
         playerLastEat_.put(player, multiplier*6);
+        break;
       case GRILLED_PORK:
         playerLastEat_.put(player, multiplier*12.8);
+        break;
       case COOKIE:
         playerLastEat_.put(player, multiplier*0.4);
+        break;
       case GOLDEN_APPLE:
         playerLastEat_.put(player, multiplier*9.6);
+        break;
       case GOLDEN_CARROT:
         playerLastEat_.put(player, multiplier*14.4);
+        break;
       case MELON:
         playerLastEat_.put(player, multiplier*1.2);
+        break;
       case MUSHROOM_SOUP:
         playerLastEat_.put(player, multiplier*7.2);
+        break;
       case POISONOUS_POTATO:
         playerLastEat_.put(player, multiplier*1.2);
+        break;
       case POTATO:
         playerLastEat_.put(player, multiplier*0.6);
+        break;
       case RAW_FISH:
         playerLastEat_.put(player, multiplier*1);
+        break;
       case PUMPKIN_PIE:
         playerLastEat_.put(player, multiplier*4.8);
+        break;
       case RAW_BEEF:
         playerLastEat_.put(player,  multiplier*1.8);
+        break;
       case RAW_CHICKEN:
         playerLastEat_.put(player, multiplier*1.2);
+        break;
       case PORK:
         playerLastEat_.put(player,  multiplier*1.8);
+        break;
       case ROTTEN_FLESH:
         playerLastEat_.put(player, multiplier*0.8);
+        break;
       case SPIDER_EYE:
         playerLastEat_.put(player, multiplier*3.2);
+        break;
       case COOKED_BEEF:
         playerLastEat_.put(player, multiplier*12.8);
+        break;
       default:
         playerLastEat_.put(player, multiplier);
         Bukkit.getServer().getScheduler().runTaskLater(this, new Runnable() {
@@ -2544,6 +2566,7 @@ public class Humbug extends JavaPlugin implements Listener {
   public void onFoodLevelChange(FoodLevelChangeEvent event) {
     final Player player = (Player) event.getEntity();
     final double mod = config_.get("hunger_slowdown").getDouble();
+    if (mod == 0.0) return; // turned off.
     Double saturation;
     if (playerLastEat_.containsKey(player)) { // if the player just ate
       saturation = playerLastEat_.get(player);
