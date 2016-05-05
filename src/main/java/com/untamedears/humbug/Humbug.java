@@ -16,12 +16,12 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_8_R3.EntityEnderPearl;
-import net.minecraft.server.v1_8_R3.EntityTypes;
-import net.minecraft.server.v1_8_R3.Item;
-import net.minecraft.server.v1_8_R3.ItemEnderPearl;
-import net.minecraft.server.v1_8_R3.MinecraftKey;
-import net.minecraft.server.v1_8_R3.RegistryID;
+import net.minecraft.server.v1_9_R1.EntityEnderPearl;
+import net.minecraft.server.v1_9_R1.EntityTypes;
+import net.minecraft.server.v1_9_R1.Item;
+import net.minecraft.server.v1_9_R1.ItemEnderPearl;
+import net.minecraft.server.v1_9_R1.MinecraftKey;
+import net.minecraft.server.v1_9_R1.RegistryID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,7 +34,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Hopper;
 import org.bukkit.command.Command;
@@ -87,6 +86,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.SheepDyeWoolEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
@@ -1329,6 +1329,45 @@ public class Humbug extends JavaPlugin implements Listener {
   }
 
   //================================================
+  // Give one-time starting kit
+
+  @BahHumbugs({
+    @BahHumbug(opt="newbie_kit", type=OptType.List),
+    @BahHumbug(opt="drop_newbie_kit", def="true")
+  })
+  @EventHandler
+  public void onGiveKitOnJoin(PlayerJoinEvent event) {
+    if (!config_.get("drop_newbie_kit").getBool()) {
+      return;
+    }
+    final Player player = event.getPlayer();
+    if (player.hasPlayedBefore()){
+      return;
+    }
+    final String playerName = player.getUniqueId().toString();
+    giveN00bKit(player);
+  }
+
+  public void giveN00bKit(Player player) {
+    Inventory inv = player.getInventory();
+	ItemStack[] kit = createN00bKit();
+	if (kit != null) {
+	    inv.addItem(kit);
+		debug("Gave newbit kit to " + player.getDisplayName());
+	} else {
+		debug("Newbie kit is not set.");
+	}
+  }
+
+  public ItemStack[] createN00bKit() {
+    List<ItemStack> skit = config_.getStartingKit();
+	if (skit != null) {
+	    return skit.toArray(new ItemStack[0]);
+	}
+	return null;
+  }
+
+  //================================================
   // Give introduction book to n00bs
 
   private Set<String> playersWithN00bBooks_ = new TreeSet<String>();
@@ -1806,7 +1845,33 @@ public class Humbug extends JavaPlugin implements Listener {
       }
     }
   }
-  
+
+//===========================================
+// 1.9 humbugs
+
+  @BahHumbug(opt="disable_chorus_fruit", def="true")
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onPlayerTeleport(PlayerTeleportEvent event) {
+    if(!config_.get("disable_chorus_fruit").getBool()) {
+      return;
+    }
+    if(event.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)) {
+      event.setCancelled(true);
+    }
+  }
+
+  @BahHumbug(opt="disable_elytra", def="true")
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onPlayerHavingAnyFun(EntityToggleGlideEvent event) {
+    if (!config_.get("disable_elytra").getBool()) {
+      return;
+    }
+    event.setCancelled(true);
+  }
+
+//==========================================
+// nether humbug
+
   @BahHumbugs({
 	  @BahHumbug(opt="disable_bed_nether_end", def="true")
   })
@@ -1906,11 +1971,13 @@ public class Humbug extends JavaPlugin implements Listener {
 
   // Changes the yield from an XP bottle
   @BahHumbugs ({
+    @BahHumbug(opt="ignore_experience", def="false"),
     @BahHumbug(opt="disable_experience", def="true"),
     @BahHumbug(opt="xp_per_bottle", type=OptType.Int, def="10")
   })
   @EventHandler(priority=EventPriority.HIGHEST)
   public void onExpBottleEvent(ExpBottleEvent event) {
+    if (config_.get("ignore_experience").getBool()) return;
     final int bottle_xp = config_.get("xp_per_bottle").getInt();
     if (config_.get("disable_experience").getBool()) {
       ((Player) event.getEntity().getShooter()).giveExp(bottle_xp);
@@ -1923,6 +1990,7 @@ public class Humbug extends JavaPlugin implements Listener {
   // Diables all XP gain except when manually changed via code.
   @EventHandler
   public void onPlayerExpChangeEvent(PlayerExpChangeEvent event) {
+    if (config_.get("ignore_experience").getBool()) return;
     if (config_.get("disable_experience").getBool()) {
       event.setAmount(0);
     }
@@ -2323,7 +2391,7 @@ public class Humbug extends JavaPlugin implements Listener {
   }
 
   // ================================================
-  // Adjust ender pearl gravity
+  // Adjust ender pearl gravity -- TODO: Forgot to check if this all works still. Woops.
 
   public final static int pearlId = 368;
   public final static MinecraftKey pearlKey = new MinecraftKey("ender_pearl");
@@ -2395,7 +2463,7 @@ public class Humbug extends JavaPlugin implements Listener {
   }
 
   // ================================================
-  // Hunger Changes
+  // Hunger Changes - this code never worked previously. Fixed it, sort of.
 
   // Keep track if the player just ate.
   private Map<Player, Double> playerLastEat_ = new HashMap<Player, Double>();
@@ -2414,48 +2482,70 @@ public class Humbug extends JavaPlugin implements Listener {
     switch(mat) {
       case APPLE:
         playerLastEat_.put(player, multiplier*2.4);
+        break;
       case BAKED_POTATO:
         playerLastEat_.put(player, multiplier*7.2);
+        break;
       case BREAD:
         playerLastEat_.put(player, multiplier*6);
+        break;
       case CAKE:
         playerLastEat_.put(player, multiplier*0.4);
+        break;
       case CARROT_ITEM:
         playerLastEat_.put(player, multiplier*4.8);
+        break;
       case COOKED_FISH:
         playerLastEat_.put(player, multiplier*6);
+        break;
       case GRILLED_PORK:
         playerLastEat_.put(player, multiplier*12.8);
+        break;
       case COOKIE:
         playerLastEat_.put(player, multiplier*0.4);
+        break;
       case GOLDEN_APPLE:
         playerLastEat_.put(player, multiplier*9.6);
+        break;
       case GOLDEN_CARROT:
         playerLastEat_.put(player, multiplier*14.4);
+        break;
       case MELON:
         playerLastEat_.put(player, multiplier*1.2);
+        break;
       case MUSHROOM_SOUP:
         playerLastEat_.put(player, multiplier*7.2);
+        break;
       case POISONOUS_POTATO:
         playerLastEat_.put(player, multiplier*1.2);
+        break;
       case POTATO:
         playerLastEat_.put(player, multiplier*0.6);
+        break;
       case RAW_FISH:
         playerLastEat_.put(player, multiplier*1);
+        break;
       case PUMPKIN_PIE:
         playerLastEat_.put(player, multiplier*4.8);
+        break;
       case RAW_BEEF:
         playerLastEat_.put(player,  multiplier*1.8);
+        break;
       case RAW_CHICKEN:
         playerLastEat_.put(player, multiplier*1.2);
+        break;
       case PORK:
         playerLastEat_.put(player,  multiplier*1.8);
+        break;
       case ROTTEN_FLESH:
         playerLastEat_.put(player, multiplier*0.8);
+        break;
       case SPIDER_EYE:
         playerLastEat_.put(player, multiplier*3.2);
+        break;
       case COOKED_BEEF:
         playerLastEat_.put(player, multiplier*12.8);
+        break;
       default:
         playerLastEat_.put(player, multiplier);
         Bukkit.getServer().getScheduler().runTaskLater(this, new Runnable() {
@@ -2476,6 +2566,7 @@ public class Humbug extends JavaPlugin implements Listener {
   public void onFoodLevelChange(FoodLevelChangeEvent event) {
     final Player player = (Player) event.getEntity();
     final double mod = config_.get("hunger_slowdown").getDouble();
+    if (mod == 0.0) return; // turned off.
     Double saturation;
     if (playerLastEat_.containsKey(player)) { // if the player just ate
       saturation = playerLastEat_.get(player);
@@ -2764,9 +2855,7 @@ public class Humbug extends JavaPlugin implements Listener {
     registerTimerForPearlCheck();
     global_instance_ = this;
     info("Enabled");
-    if (Bukkit.getPluginManager().getPlugin("CombatTag") != null)
-    	combatTag_ = new CombatTagManager();
-    else if (Bukkit.getPluginManager().getPlugin("CombatTagPlus") != null)
+    if (Bukkit.getPluginManager().getPlugin("CombatTagPlus") != null)
     	combatTag_ = new CombatTagPlusManager();
   }
   
@@ -2847,6 +2936,25 @@ public class Humbug extends JavaPlugin implements Listener {
       giveN00bBook(sendBookTo);
       return true;
     }
+	if (((sender instanceof Player && ((Player)sender).isOp()) ||
+		(sender instanceof ConsoleCommandSender)) &&
+        command.getName().equals("introkit")) {
+      if (!config_.get("drop_newbie_kit").getBool()) {
+        return true;
+      }
+      Player sendKitTo = sender instanceof Player ? (Player)sender : null;
+      if (args.length >= 1) {
+        Player possible = Bukkit.getPlayerExact(args[0]);
+        if (possible != null) {
+          sendKitTo = possible;
+        }
+      }
+      if (sendKitTo != null) {
+		info("Sending welcome kit to " + sendKitTo.getDisplayName());
+        giveN00bKit(sendKitTo);
+      }
+      return true;
+    }
     if (sender instanceof Player
         && command.getName().equals("bahhumbug")) {
       giveHolidayPackage((Player)sender);
@@ -2882,7 +2990,10 @@ public class Humbug extends JavaPlugin implements Listener {
         config_.setDebug(toBool(value));
       }
       msg = String.format("debug = %s", config_.getDebug());
-    } else if (option.equals("loot_multiplier")) {
+    } else if (option.equals("default_kit")) {
+      config_.setDefaultStartingKit();
+	  info("Default kit set");
+	}else if (option.equals("loot_multiplier")) {
       String entity_type = "generic";
       if (set && subvalue_set) {
         entity_type = value;

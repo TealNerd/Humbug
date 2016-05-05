@@ -37,6 +37,8 @@ Minecraft server plug-in: Simply toggles various functionality
 - Prevents end portal tiles from being destroyed
 - Prevents inventories, not your own, from being opened while in vehicles
 - Prevents container carts from being opened
+- Optionally prevents boats from running on land
+- Optionally prevents players from destroying their own boat
 - Give projectiles a slow debuff on hit
 - Multiplies mob death loot item count
 - Disables experience except from XP bottles
@@ -51,6 +53,10 @@ Minecraft server plug-in: Simply toggles various functionality
 - Adds options to sanitize signs on placement
 - Adds option to sanitize existing signs in chunks
 
+1.9 Feature Alterations:
+- Disable Chorus Fruit teleportation
+- Disable Elytra use
+
 The 'humbug' console command can be used to get or set any of the configuration file settings while the server is running. Also available are 'humbug save' and 'humbug reload'.
 
 Config file settings:
@@ -58,6 +64,7 @@ Config file settings:
 - anvil: Boolean, Turns on anvil use
 - ender_chest: Boolean, Turns on ender chest use
 - ender_chests_placeable: Boolean, Allows ender chests to be placed
+- ender_backpacks: Boolean, sets up Ender Chests as a backpack, dropped on quit/death/kick
 - villager_trades: Boolean, Turns on villager trades
 - portalcreate: Boolean, turns on portal creation
 - enderdragon: Boolean, turns on ender dragon
@@ -80,6 +87,7 @@ Config file settings:
 - fix_vehicle_logout_bug: Boolean, Fixes a teleport bug when players logout in vehicles
 - player_max_health: Integer, sets all Player maximum health
 - ender_pearl_teleportation: Boolean, Turns on Ender Pearl teleportation
+- fix_teleport_glitch: Boolean, fixes glitchy Ender Pearl teleportation coords
 - ender_pearl_teleportation_throttled: Boolean, Activates a cooldown between Ender Pearl teleports
 - ender_pearl_gravity: Double, Alters the gravity which effects Ender Pearl -Y acceleration, default Minecraft value is 0.03
 - ench_gold_app_edible: Boolean, Allows players to eat Enchanted Golden Apples. If false, Enchanted Golden Apples are converted to normal Golden Apples
@@ -97,15 +105,19 @@ Config file settings:
 - projectile_slow_chance: Integer between 1 and 100 or out of bounds to disable, percentage chance of a projectile shot causing a slow debuff
 - projectile_slow_ticks: Integer, number of server ticks a projectile shot's slow debuff will last
 - loot_drop: Integer, multiplier to apply to mob death item counts
+- ignore_experience: Boolean, disables BottleO (exp) controls
 - disable_experience: Boolean, disables all vanilla experience but XP bottles
 - xp_per_bottle: Integer, sets the amount of XP given to a player by an XP bottle
 - find_end_portals: String, name of the world in which to search for end portals
 - nerf_strength: Boolean, Nerfs the strength potion back to pre-1.5 mechanics
 - buff_health_pots: Boolean, Buffs the health potion back to pre-1.5 mechanics
 - horse_speed: Double, Sets the base movement speed of all mounted horses. This is MineCraft's adjustment ratio. The default 0.17 is just slower than a minecart.
+- prevent_self_boat_break: Boolean, prevents players from breaking their own boats (kicks the offending player)
+- prevent_land_boats: Boolean, check if a boat is over water and cancel motion if it isn't
 - fix_minecart_reenter_bug: Boolean, Fixes the minecart re-enter bug where players in a destroyed minecart could fall through the world
 - strength_multiplier: Integer, multiplier for added damage from strength potion levels.
 - hunger_slowdown: Integer, amount of saturation to give a player when they lose a point of hunger
+- saturation_multiplier: Double, adjusts saturation effect of food types, disabled if 0.0
 - prevent_tree_wraparound: Boolean, prevents structure growth from wrapping around from the top of the world to bedrock causing block overwrite.
 - disable_hopper_out_transfers: Boolean, disables transfers from hoppers to other hoppers or droppers
 - bow_buff: Double, (de)buffs bow damage. Set to 1 for default, less than one for debuff, more than one for buff, 0 for no effect and less than 0 for heal.
@@ -114,12 +126,30 @@ Config file settings:
 - prevent_long_signs_allornothing: Boolean, if over limit clear line (if true) or truncate line (if false)
 - prevent_long_signs_cancelevent: Boolean, if over limit just cancel the sign change event
 - prevent_long_signs_in_chunks: Boolean, clears over-long signs from chunks as they load
+- equipping_banners: Boolean, allows equipping a banner as a hat
+- changing_spawners_with_eggs: Boolean, if True disables changing spawner type with a monster egg
+- copy_book_enable: Boolean, if false disables book copying
+- disable_bed_nether_end: Boolean, if true disables placing beds in the nether (specifically addresses exploding beds which appear to bypass Citadel)
+- max_water_lava_timer: Integer, delay time to clearing lava/water propogation halt
+- max_water_lava_height: Integer, height at which to control/eliminate water propagation
+- max_water_lava_amount: Integer, number of water/lava blocks at which point further water propogation (over height limit) is halted
+- obsidian_generator: Boolean, turns on 1.7-style obsidian generation mechanism
+- drop_newbie_book: Boolean, enables welcome book dropping
+- tag_on_join: Boolean, true enabled Combat Tagging on login (assuming Combat Tag is available)
+- disable_entities_portal: Boolean, shortcut method to cancel all entity teleportation through portals
+- disable_xp_orbs: Boolean, true to disable any XP drop from mobs 
+- remove_pearl_chunks: Boolean, removes dropped Ender Pearls when a chunk unloads (ties into PrisonPearl)
+- enchanting_table: Boolean, disables enchanting tables
+- disk_space_shutdown: Double, percentage of disk space that, if less then this mark is available, triggers an orderly server shutdown
+- disable_chorus_fruit: Boolean, disables teleportation using chorus fruit
+- disable_elytra: Boolean, disables mounting or dismounting from elytra
 
 Default configuration (biased for CivCraft):
 - debug: false
 - anvil: false
 - ender_chest: false
 - ender_chests_placeable: true
+- ender_backpacks: false
 - villager_trades: false
 - portalcreate: true
 - enderdragon: true
@@ -142,6 +172,7 @@ Default configuration (biased for CivCraft):
 - fix_vehicle_logout_bug: true
 - player_max_health: 20
 - ender_pearl_teleportation: true
+- fix_teleport_glitch: true
 - ender_pearl_teleportation_throttled: true
 - ender_pearl_gravity: 0.06
 - ench_gold_app_edible: false
@@ -159,15 +190,19 @@ Default configuration (biased for CivCraft):
 - projectile_slow_chance: 30
 - projectile_slow_ticks: 100
 - loot_drop: 1
+- ignore_experience: false
 - disable_experience: true
 - xp_per_bottle: 10
 - find_end_portals:
 - nerf_strength: true
 - buff_health_pots: true
 - horse_speed: 0.17
+- prevent_self_boat_break: true
+- prevent_land_boats: true
 - fix_minecart_reenter_bug: true
 - strength_multiplier: 3
 - hunger_slowdown: 0.0
+- saturation_multiplier: 0.0
 - prevent_tree_wraparound: true
 - disable_hopper_out_transfers: false
 - bow_buff: 1.0
@@ -176,3 +211,31 @@ Default configuration (biased for CivCraft):
 - prevent_long_signs_allornothing: true
 - prevent_long_signs_cancelevent: false
 - prevent_long_signs_in_chunks: true
+- equipping_banners: true
+- changing_spawners_with_eggs: true
+- copy_book_enable: true
+- disabled_bed_nether_end: true
+- max_water_lava_timer: 1200
+- max_water_lava_height: 100
+- max_water_lava_amount: 400
+- obsidian_generator: true
+- drop_newbie_book: true
+- tag_on_join: true
+- disable_entities_portal: true 
+- disable_xp_orbs: true
+- remove_pearl_chunks: true
+- enchanting_table: false
+- disk_space_shutdown: 0.02
+- disable_chorus_fruit: true
+- disable_elytra: true
+
+Defines a few utility commands:
+
+/invsee <Player> to peak into an active player's main inventory.
+
+/bahhumbug <Player> gives a player a holiday package
+
+/introbook [<Player>] gives a player (or self) the intro-to-server book
+
+/introkit [<Player>] OP command to give a player (or self) the intro kit
+
