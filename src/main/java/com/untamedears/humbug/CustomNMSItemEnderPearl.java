@@ -30,7 +30,7 @@ public class CustomNMSItemEnderPearl extends ItemEnderPearl {
       --itemstack.count;
     }
 
-    world.a((EntityHuman) null, entityhuman.locX, entityhuman.locY, entityhuman.locZ, SoundEffects.be, SoundCategory.NEUTRAL, 0.5F, 0.4F / (ItemEnderPearl.i.nextFloat() * 0.4F + 0.8F));
+    world.a((EntityHuman) null, entityhuman.locX, entityhuman.locY, entityhuman.locZ, SoundEffects.be, SoundCategory.NEUTRAL, 0.5F, 0.4F / (ItemEnderPearl.j.nextFloat() * 0.4F + 0.8F));
     if (!world.isClientSide) {
       double gravity = cfg_.get("ender_pearl_gravity").getDouble();
       CustomNMSEntityEnderPearl prl = new CustomNMSEntityEnderPearl(world, entityhuman, gravity);
