@@ -1214,7 +1214,10 @@ public class Humbug extends JavaPlugin implements Listener {
     PlayerInventory inventory = defender.getInventory();
     int enchant_level = 0;
     for (ItemStack armor : inventory.getArmorContents()) {
-      enchant_level += armor.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
+    	if (armor == null) {
+    		continue;
+    	}
+    	enchant_level += armor.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
     }
     int damage_adjustment = 0;
     if (enchant_level >= 3 && enchant_level <= 6) {
