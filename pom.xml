@@ -6,7 +6,7 @@
 	<groupId>com.untamedears</groupId>
 	<artifactId>Humbug</artifactId>
 	<packaging>jar</packaging>
-	<version>1.8.12</version>
+	<version>1.8.20</version>
 	<name>Humbug</name>
 	<url>https://github.com/Civcraft/Humbug</url>
 
@@ -54,13 +54,13 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>Spigot</artifactId>
-			<version>1.9</version>
+			<version>1.10</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.minelink</groupId>
 			<artifactId>CombatTagPlus</artifactId>
-			<version>1.2.2-SNAPSHOT</version>
+			<version>1.2.4-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
