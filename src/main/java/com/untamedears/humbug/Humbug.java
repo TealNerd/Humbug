@@ -1188,61 +1188,6 @@ public class Humbug extends JavaPlugin implements Listener {
     LavaAreaCheck(block, config_.get("cobble_from_lava_scan_radius").getInt());
   }
 
-  // ================================================
-  // Counteract 1.4.6 protection enchant nerf
-
-  @BahHumbug(opt="scale_protection_enchant", def="true")
-  @EventHandler(priority = EventPriority.LOWEST) // ignoreCancelled=false
-  public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
-    if (!config_.get("scale_protection_enchant").getBool()) {
-        return;
-    }
-    double damage = event.getDamage();
-    if (damage <= 0.0000001D) {
-      return;
-    }
-    DamageCause cause = event.getCause();
-    if (!cause.equals(DamageCause.ENTITY_ATTACK) &&
-            !cause.equals(DamageCause.PROJECTILE)) {
-        return;
-    }
-    Entity entity = event.getEntity();
-    if (!(entity instanceof Player)) {
-      return;
-    }
-    Player defender = (Player)entity;
-    PlayerInventory inventory = defender.getInventory();
-    int enchant_level = 0;
-    for (ItemStack armor : inventory.getArmorContents()) {
-    	if (armor == null) {
-    		continue;
-    	}
-    	enchant_level += armor.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
-    }
-    int damage_adjustment = 0;
-    if (enchant_level >= 3 && enchant_level <= 6) {
-      // 0 to 2
-      damage_adjustment = prng_.nextInt(3);
-    } else if (enchant_level >= 7 && enchant_level <= 10) {
-      // 0 to 3
-      damage_adjustment = prng_.nextInt(4);
-    } else if (enchant_level >= 11 && enchant_level <= 14) {
-      // 1 to 4
-      damage_adjustment = prng_.nextInt(4) + 1;
-    } else if (enchant_level >= 15) {
-      // 2 to 4
-      damage_adjustment = prng_.nextInt(3) + 2;
-    }
-    damage = Math.max(damage - (double)damage_adjustment, 0.0D);
-    event.setDamage(damage);
-  }
-
-  @BahHumbug(opt="player_max_health", type=OptType.Int, def="20")
-  @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
-  public void onPlayerJoinEvent(PlayerJoinEvent event) {
-    Player player = event.getPlayer();
-    player.setMaxHealth((double)config_.get("player_max_health").getInt());
-  }
 
   // ================================================
   // Fix dupe bug with chests and other containers
@@ -1305,30 +1250,6 @@ public class Humbug extends JavaPlugin implements Listener {
         }
       }
     }
-  }
-
-  //=================================================
-  // Combat Tag players on server join
-
-  @BahHumbug(opt="tag_on_join", def="true")
-  @EventHandler
-  public void tagOnJoin(PlayerJoinEvent event){
-    if(!config_.get("tag_on_join").getBool()) {
-      return;
-    }
-    // Delay two ticks to tag after secure login has been denied.
-    // This opens a 1 tick window for a cheater to login and grab
-    // server info, which should be detectable and bannable.
-    final Player loginPlayer = event.getPlayer();
-    Bukkit.getScheduler().runTaskLater(this, new Runnable() {
-      @Override
-      public void run() {
-    	  if (loginPlayer == null || combatTag_ == null)
-    		  return;
-    	  combatTag_.tagPlayer(loginPlayer.getName());
-    	  loginPlayer.sendMessage("You have been Combat Tagged on Login");
-      }
-    }, 2L);
   }
 
   //================================================
@@ -1452,81 +1373,6 @@ public class Humbug extends JavaPlugin implements Listener {
       }
     }
     return foundEmpty >= emptySlots;
-  }
-
-  public void giveHolidayPackage(Player player) {
-    int count = 0;
-    Inventory inv = player.getInventory();
-    while (checkForInventorySpace(inv, 4)) {
-        inv.addItem(createHolidayBook());
-        inv.addItem(createFruitcake());
-        inv.addItem(createTurkey());
-        inv.addItem(createCoal());
-        ++count;
-    }
-    info(String.format("%s generated %d packs of holiday cheer.",
-          player.getName(), count));
-  }
-
-  public ItemStack createHolidayBook() {
-    ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-    BookMeta sbook = (BookMeta)book.getItemMeta();
-    sbook.setTitle(config_.getHolidayTitle());
-    sbook.setAuthor(config_.getHolidayAuthor());
-    sbook.setPages(config_.getHolidayPages());
-    List<String> lore = new ArrayList<String>(1);
-    lore.add("December 25th, 2013");
-    sbook.setLore(lore);
-    book.setItemMeta(sbook);
-    return book;
-  }
-
-  public ItemStack createFruitcake() {
-    ItemStack cake = new ItemStack(Material.CAKE);
-    ItemMeta meta = cake.getItemMeta();
-    meta.setDisplayName("Fruitcake");
-    List<String> lore = new ArrayList<String>(1);
-    lore.add("Deliciously stale");
-    meta.setLore(lore);
-    cake.setItemMeta(meta);
-    return cake;
-  }
-
-  private String[] turkey_names_ = new String[] {
-    "Turkey",
-    "Turkey",
-    "Turkey",
-    "Turducken",
-    "Tofurkey",
-    "Cearc Frangach",
-    "Dinde",
-    "Kalkoen",
-    "Indeyka",
-    "Pollo d'India",
-    "Pelehu",
-    "Chilmyeonjo"
-  };
-
-  public ItemStack createTurkey() {
-    String turkey_name = turkey_names_[prng_.nextInt(turkey_names_.length)];
-    ItemStack turkey = new ItemStack(Material.COOKED_CHICKEN);
-    ItemMeta meta = turkey.getItemMeta();
-    meta.setDisplayName(turkey_name);
-    List<String> lore = new ArrayList<String>(1);
-    lore.add("Tastes like chicken");
-    meta.setLore(lore);
-    turkey.setItemMeta(meta);
-    return turkey;
-  }
-
-  public ItemStack createCoal() {
-    ItemStack coal = new ItemStack(Material.COAL);
-    ItemMeta meta = coal.getItemMeta();
-    List<String> lore = new ArrayList<String>(1);
-    lore.add("You've been naughty");
-    meta.setLore(lore);
-    coal.setItemMeta(meta);
-    return coal;
   }
 
 
@@ -1671,20 +1517,6 @@ public class Humbug extends JavaPlugin implements Listener {
 	public void dropItemAtLocation(Block b, ItemStack is) {
 		dropItemAtLocation(b.getLocation(), is);
 	}
-  
-  private void damageTool(ItemStack is) {
-	  Material m = is.getType();
-	  if (m != Material.DIAMOND_PICKAXE && m != Material.IRON_AXE && m != Material.WOOD_PICKAXE && 
-			  m != Material.GOLD_PICKAXE && m != Material.STONE_PICKAXE && m != Material.WOOD_PICKAXE) {
-		  return;
-	  }
-	  if(is.getDurability() >= is.getType().getMaxDurability()) {
-          is.setAmount(0);
-      }
-      if(prng_.nextInt(is.getEnchantmentLevel(Enchantment.DURABILITY) + 1) == 0) {
-          is.setDurability((short) (is.getDurability() + 1));
-      }
-  }
 
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
   public void onBlockFromToEvent(BlockFromToEvent e) {
@@ -1793,61 +1625,6 @@ public class Humbug extends JavaPlugin implements Listener {
     }
     return count;
   }
-  // ================================================
-  // Changes Strength Potions, strength_multiplier 3 is roughly Pre-1.6 Level
-
-  @BahHumbugs ({
-    @BahHumbug(opt="nerf_strength", def="true"),
-    @BahHumbug(opt="strength_multiplier", type=OptType.Int, def="3")
-  })
-  @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-  public void onPlayerDamage(EntityDamageByEntityEvent event) {
-    if (!config_.get("nerf_strength").getBool()) {
-      return;
-    }
-    if (!(event.getDamager() instanceof Player)) {
-      return;
-    }
-    Player player = (Player)event.getDamager();
-    final int strengthMultiplier = config_.get("strength_multiplier").getInt();
-    if (player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
-      for (PotionEffect effect : player.getActivePotionEffects()) {
-        if (effect.getType().equals(PotionEffectType.INCREASE_DAMAGE)) {
-          final int potionLevel = effect.getAmplifier() + 1;
-          final double unbuffedDamage = event.getDamage() / (1.3 * potionLevel + 1);
-          final double newDamage = unbuffedDamage + (potionLevel * strengthMultiplier);
-          event.setDamage(newDamage);
-          break;
-        }
-      }
-    }
-  }
-
-  //=================================================
-  // Buffs health splash to pre-1.6 levels
-
-  @BahHumbug(opt="buff_health_pots", def="true")
-  @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-  public void onPotionSplash(PotionSplashEvent event) {
-    if (!config_.get("buff_health_pots").getBool()) {
-      return;
-    }
-    for (PotionEffect effect : event.getEntity().getEffects()) {
-      if (!(effect.getType().getName().equalsIgnoreCase("heal"))) { // Splash potion of poison
-        return;
-      }
-    }
-    for (LivingEntity entity : event.getAffectedEntities()) {
-      if (entity instanceof Player) {
-        if(((Damageable)entity).getHealth() > 0d) {
-          final double newHealth = Math.min(
-            ((Damageable)entity).getHealth() + 4.0D,
-            ((Damageable)entity).getMaxHealth());
-          entity.setHealth(newHealth);
-        }
-      }
-    }
-  }
 
 //===========================================
 // 1.9 humbugs
@@ -1890,83 +1667,6 @@ public class Humbug extends JavaPlugin implements Listener {
 	  if (env == Environment.NETHER || env == Environment.THE_END || 
 		  Biome.HELL == biome || Biome.SKY == biome)
 		  event.setCancelled(true);
-  }
-
-  //=================================================
-  // Bow shots cause slow debuff
-
-  @BahHumbugs ({
-    @BahHumbug(opt="projectile_slow_chance", type=OptType.Int, def="30"),
-    @BahHumbug(opt="projectile_slow_ticks", type=OptType.Int, def="100")
-  })
-  @EventHandler
-  public void onEDBE(EntityDamageByEntityEvent event) {
-    int rate = config_.get("projectile_slow_chance").getInt();
-    if (rate <= 0 || rate > 100) {
-      return;
-    }
-    if (!(event.getEntity() instanceof Player)) {
-      return;
-    }
-    boolean damager_is_player_arrow = false;
-    int chance_scaling = 0;
-    Entity damager_entity = event.getDamager();
-    if (damager_entity != null) {
-      // public LivingEntity CraftArrow.getShooter()
-      // Playing this game to not have to take a hard dependency on
-      //  craftbukkit internals.
-      try {
-        Class<?> damager_class = damager_entity.getClass();
-        if (damager_class.getName().endsWith(".CraftArrow")) {
-          Method getShooter = damager_class.getMethod("getShooter");
-          Object result = getShooter.invoke(damager_entity);
-          if (result instanceof Player) {
-            damager_is_player_arrow = true;
-            String player_name = ((Player)result).getName();
-            if (bow_level_.containsKey(player_name)) {
-              chance_scaling = bow_level_.get(player_name);
-            }
-          }
-        }
-      } catch(Exception ex) {}
-    }
-    if (!damager_is_player_arrow) {
-      return;
-    }
-    rate += chance_scaling * 5;
-    int percent = prng_.nextInt(100);
-    if (percent < rate){
-      int ticks = config_.get("projectile_slow_ticks").getInt();
-      Player player = (Player)event.getEntity();
-      player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, ticks, 1, false));
-    }
-  }
-
-  // Used to track bow enchantment levels per player
-  private Map<String, Integer> bow_level_ = new TreeMap<String, Integer>();
-
-  @EventHandler
-  public void onEntityShootBow(EntityShootBowEvent event) {
-    if (!(event.getEntity() instanceof Player)) {
-         return;
-    }
-    int ench_level = 0;
-    ItemStack bow = event.getBow();
-    Map<Enchantment, Integer> enchants = bow.getEnchantments();
-    for (Enchantment ench : enchants.keySet()) {
-      int tmp_ench_level = 0;
-      if (ench.equals(Enchantment.KNOCKBACK) || ench.equals(Enchantment.ARROW_KNOCKBACK)) {
-        tmp_ench_level = enchants.get(ench) * 2;
-      } else if (ench.equals(Enchantment.ARROW_DAMAGE)) {
-        tmp_ench_level = enchants.get(ench);
-      }
-      if (tmp_ench_level > ench_level) {
-        ench_level = tmp_ench_level;
-      }
-    }
-    bow_level_.put(
-        ((Player)event.getEntity()).getName(),
-        ench_level);
   }
 
   // ================================================
@@ -2465,125 +2165,6 @@ public class Humbug extends JavaPlugin implements Listener {
     }
   }
 
-  // ================================================
-  // Hunger Changes - this code never worked previously. Fixed it, sort of.
-
-  // Keep track if the player just ate.
-  private Map<Player, Double> playerLastEat_ = new HashMap<Player, Double>();
-
-  @BahHumbug(opt="saturation_multiplier", type=OptType.Double, def="0.0")
-  @EventHandler
-  public void setSaturationOnFoodEat(PlayerItemConsumeEvent event) {
-    // Each food sets a different saturation.
-    final Player player = event.getPlayer();
-    ItemStack item = event.getItem();
-    Material mat = item.getType();
-    double multiplier = config_.get("saturation_multiplier").getDouble();
-    if (multiplier <= 0.000001 && multiplier >= -0.000001) {
-      return;
-    }
-    switch(mat) {
-      case APPLE:
-        playerLastEat_.put(player, multiplier*2.4);
-        break;
-      case BAKED_POTATO:
-        playerLastEat_.put(player, multiplier*7.2);
-        break;
-      case BREAD:
-        playerLastEat_.put(player, multiplier*6);
-        break;
-      case CAKE:
-        playerLastEat_.put(player, multiplier*0.4);
-        break;
-      case CARROT_ITEM:
-        playerLastEat_.put(player, multiplier*4.8);
-        break;
-      case COOKED_FISH:
-        playerLastEat_.put(player, multiplier*6);
-        break;
-      case GRILLED_PORK:
-        playerLastEat_.put(player, multiplier*12.8);
-        break;
-      case COOKIE:
-        playerLastEat_.put(player, multiplier*0.4);
-        break;
-      case GOLDEN_APPLE:
-        playerLastEat_.put(player, multiplier*9.6);
-        break;
-      case GOLDEN_CARROT:
-        playerLastEat_.put(player, multiplier*14.4);
-        break;
-      case MELON:
-        playerLastEat_.put(player, multiplier*1.2);
-        break;
-      case MUSHROOM_SOUP:
-        playerLastEat_.put(player, multiplier*7.2);
-        break;
-      case POISONOUS_POTATO:
-        playerLastEat_.put(player, multiplier*1.2);
-        break;
-      case POTATO:
-        playerLastEat_.put(player, multiplier*0.6);
-        break;
-      case RAW_FISH:
-        playerLastEat_.put(player, multiplier*1);
-        break;
-      case PUMPKIN_PIE:
-        playerLastEat_.put(player, multiplier*4.8);
-        break;
-      case RAW_BEEF:
-        playerLastEat_.put(player,  multiplier*1.8);
-        break;
-      case RAW_CHICKEN:
-        playerLastEat_.put(player, multiplier*1.2);
-        break;
-      case PORK:
-        playerLastEat_.put(player,  multiplier*1.8);
-        break;
-      case ROTTEN_FLESH:
-        playerLastEat_.put(player, multiplier*0.8);
-        break;
-      case SPIDER_EYE:
-        playerLastEat_.put(player, multiplier*3.2);
-        break;
-      case COOKED_BEEF:
-        playerLastEat_.put(player, multiplier*12.8);
-        break;
-      default:
-        playerLastEat_.put(player, multiplier);
-        Bukkit.getServer().getScheduler().runTaskLater(this, new Runnable() {
-          // In case the player ingested a potion, this removes the
-          // saturation from the list. Unsure if I have every item
-          // listed. There is always the other cases of like food
-          // that shares same id
-          @Override
-          public void run() {
-            playerLastEat_.remove(player);
-          }
-        }, 80);
-    }
-  }
-
-  @BahHumbug(opt="hunger_slowdown", type=OptType.Double, def="0.0")
-  @EventHandler
-  public void onFoodLevelChange(FoodLevelChangeEvent event) {
-    final Player player = (Player) event.getEntity();
-    final double mod = config_.get("hunger_slowdown").getDouble();
-    if (mod == 0.0) return; // turned off.
-    Double saturation;
-    if (playerLastEat_.containsKey(player)) { // if the player just ate
-      saturation = playerLastEat_.get(player);
-      if (saturation == null) {
-        saturation = ((Float)player.getSaturation()).doubleValue();
-      }
-    } else {
-      saturation = Math.min(
-          player.getSaturation() + mod,
-          20.0D + (mod * 2.0D));
-    }
-    player.setSaturation(saturation.floatValue());
-  }
-
   //=================================================
   //Remove Book Copying
   @BahHumbug(opt="copy_book_enable", def= "false")
@@ -2792,51 +2373,6 @@ public class Humbug extends JavaPlugin implements Listener {
 		  e.setCancelled(true);
 	  }
   }
-  
-  
-//disable strength2 potions by disallowing players to click them
-  @BahHumbug(opt="disable_strength2", def="true")
-  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-  public void itemClick(InventoryClickEvent e) {
-	  if (!config_.get("disable_strength2").getBool()) {
-	      return;
-	  }
-	  if (isStrength2Pot(e.getCurrentItem())) {
-		  e.setCurrentItem(new ItemStack(Material.AIR));
-		  e.getWhoClicked().sendMessage(ChatColor.RED + "This item is disabled");
-		  e.setCancelled(true);
-	  }
-  }
-  
-  //disable drinking strength2
-  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-  public void drinkingPotion(PlayerItemConsumeEvent e) {
-	  if (!config_.get("disable_strength2").getBool()) {
-	      return;
-	  }
-	  if (isStrength2Pot(e.getItem())) {
-		  e.setCancelled(true);
-	  }
-  }
-  
-  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-  public void strength2Splash(PotionSplashEvent e) {
-	  if (isStrength2Pot(e.getEntity().getItem())) {
-		  for(LivingEntity le : e.getAffectedEntities()) {
-			  e.setIntensity(le, 0.0);
-		  }
-	  }
-  }
-  
-  public boolean isStrength2Pot(ItemStack is) {
-	  if (is == null) {
-		  return false;
-	  }
-	  if (is.getType() == Material.POTION && (is.getDurability() == 8233 || is.getDurability() == 16425)) {
-		  return true;
-	  }
-	  return false;
-  }
 
   
 
@@ -2956,11 +2492,6 @@ public class Humbug extends JavaPlugin implements Listener {
 		info("Sending welcome kit to " + sendKitTo.getDisplayName());
         giveN00bKit(sendKitTo);
       }
-      return true;
-    }
-    if (sender instanceof Player
-        && command.getName().equals("bahhumbug")) {
-      giveHolidayPackage((Player)sender);
       return true;
     }
     if (!(sender instanceof ConsoleCommandSender) ||
