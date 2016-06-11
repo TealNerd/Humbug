@@ -1,14 +1,14 @@
 package com.untamedears.humbug;
 
 
-import net.minecraft.server.v1_9_R1.EntityHuman;
-import net.minecraft.server.v1_9_R1.Item;
-import net.minecraft.server.v1_9_R1.ItemEnderPearl;
-import net.minecraft.server.v1_9_R1.ItemStack;
-import net.minecraft.server.v1_9_R1.StatisticList;
-import net.minecraft.server.v1_9_R1.World;
-import net.minecraft.server.v1_9_R1.SoundEffects;
-import net.minecraft.server.v1_9_R1.SoundCategory;
+import net.minecraft.server.v1_10_R1.EntityHuman;
+import net.minecraft.server.v1_10_R1.Item;
+import net.minecraft.server.v1_10_R1.ItemEnderPearl;
+import net.minecraft.server.v1_10_R1.ItemStack;
+import net.minecraft.server.v1_10_R1.StatisticList;
+import net.minecraft.server.v1_10_R1.World;
+import net.minecraft.server.v1_10_R1.SoundEffects;
+import net.minecraft.server.v1_10_R1.SoundCategory;
 
 import com.untamedears.humbug.Config;
 import com.untamedears.humbug.CustomNMSEntityEnderPearl;
