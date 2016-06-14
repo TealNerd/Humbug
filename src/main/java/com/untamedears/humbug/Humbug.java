@@ -16,12 +16,12 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_9_R1.EntityEnderPearl;
-import net.minecraft.server.v1_9_R1.EntityTypes;
-import net.minecraft.server.v1_9_R1.Item;
-import net.minecraft.server.v1_9_R1.ItemEnderPearl;
-import net.minecraft.server.v1_9_R1.MinecraftKey;
-import net.minecraft.server.v1_9_R1.RegistryID;
+import net.minecraft.server.v1_10_R1.EntityEnderPearl;
+import net.minecraft.server.v1_10_R1.EntityTypes;
+import net.minecraft.server.v1_10_R1.Item;
+import net.minecraft.server.v1_10_R1.ItemEnderPearl;
+import net.minecraft.server.v1_10_R1.MinecraftKey;
+import net.minecraft.server.v1_10_R1.RegistryID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

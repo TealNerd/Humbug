@@ -1,14 +1,14 @@
 package com.untamedears.humbug;
 
 
-import net.minecraft.server.v1_9_R1.EntityHuman;
-import net.minecraft.server.v1_9_R1.Item;
-import net.minecraft.server.v1_9_R1.ItemEnderPearl;
-import net.minecraft.server.v1_9_R1.ItemStack;
-import net.minecraft.server.v1_9_R1.StatisticList;
-import net.minecraft.server.v1_9_R1.World;
-import net.minecraft.server.v1_9_R1.SoundEffects;
-import net.minecraft.server.v1_9_R1.SoundCategory;
+import net.minecraft.server.v1_10_R1.EntityHuman;
+import net.minecraft.server.v1_10_R1.Item;
+import net.minecraft.server.v1_10_R1.ItemEnderPearl;
+import net.minecraft.server.v1_10_R1.ItemStack;
+import net.minecraft.server.v1_10_R1.StatisticList;
+import net.minecraft.server.v1_10_R1.World;
+import net.minecraft.server.v1_10_R1.SoundEffects;
+import net.minecraft.server.v1_10_R1.SoundCategory;
 
 import com.untamedears.humbug.Config;
 import com.untamedears.humbug.CustomNMSEntityEnderPearl;
@@ -30,7 +30,8 @@ public class CustomNMSItemEnderPearl extends ItemEnderPearl {
       --itemstack.count;
     }
 
-    world.a((EntityHuman) null, entityhuman.locX, entityhuman.locY, entityhuman.locZ, SoundEffects.be, SoundCategory.NEUTRAL, 0.5F, 0.4F / (ItemEnderPearl.i.nextFloat() * 0.4F + 0.8F));
+    world.a((EntityHuman) null, entityhuman.locX, entityhuman.locY, entityhuman.locZ, SoundEffects.bg, SoundCategory.NEUTRAL, 0.5F, 0.4F / (ItemEnderPearl.j.nextFloat() * 0.4F + 0.8F));
+	entityhuman.df().a(this, 20);
     if (!world.isClientSide) {
       double gravity = cfg_.get("ender_pearl_gravity").getDouble();
       CustomNMSEntityEnderPearl prl = new CustomNMSEntityEnderPearl(world, entityhuman, gravity);
