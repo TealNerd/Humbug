@@ -13,3 +13,4 @@
 *.bat
 .gitignore
 /bin
+/target/
