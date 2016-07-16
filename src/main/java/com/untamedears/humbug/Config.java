@@ -34,48 +34,73 @@ public class Config {
   private static final String find_end_portals_ = null;
   private static final int projectile_slow_ticks_ = 100;
   private static final int loot_multiplier_ = 1;
-  private static final String book_name_ = "Welcome to Civcraft";
-  private static final String book_author_ = "ttk2";
+  private static final String book_name_ = "Civcraft Beginner's Guide";
+  private static final String book_author_ = "Civcraft Admins";
   private static final String book_text_ =
-	      "    {|oWhat is CivCraft?\n"
-	      + "\"Civcraft is an experiment for communities & political ideologies [...] to work together to create and shape civilization or to watch it fall\"{|r\n"
-	      + "-Ttk2, server owner\n}|"
-	      + "    {|oWhat is CivCraft?{|r\n"
-	      + "{|lNOT just survival{|r Admins are hands-off and only handle glitches and hackers\n"
-	      + "{|lNOT just chaos{|r Mods allow players and towns to enforce their own rules\n"
-	      + "{|lNOT just roleplay{|r Nobody pretends -- conflict is genuine and heated\n}|"
-	      + "    {|oBasic Mechanics{|r\n"
-	      + "-The world is a series of circular shards\n"
-	      + "-Each stretches 5-6k blocks\n"
-		  + "-Connected by World Border portals\n"
-	      + "-500 block chat range\n"
-	      + "-Respawn in random area unless you sleep\n"
-	      + "-Food grows slowly\n"
-	      + "-No Nether portals\n"
-	      + "-Nether biomes instead\n"
-	      + "-No XP from killing\n}|"
-	      + "   {|oCivCraft Mods{|r\n"
-	      + "{|lCitadel{|r: Reinforces things so it takes numerous breaks to destroy them. Locks some things too.\n"
-	      + "{|lMore Info:{|r {|oVisual Guide:{|r imgur.com/BnlL2 {|oWiki Page:{|r tinyurl.com/citadelmod\n"
-	      + "{|oType \"/help citadel\" in chat to get commands\n}|"
-	      + "   {|lPrison Pearl{|r: Ender Pearls trap players in the end. Others can steal back your pearl and free you -- you always know where it is so they cannot hide it\n"
-	      + "{|lMore Info:{|r {|oVisual Guide:{|r imgur.com/XbhkK {|oWiki Page:{|r tinyurl.com/prisperl\n}|"
-	      + "   {|lJuke Alert{|r: Creates 'Juke' blocks that record player activity in radius. If you steal, grief, or trespass -- people will know about it & put a bounty for you to be pearled.\n"
-	      + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/snitchblock\n}|"
-	      + "   {|lMusterCull{|r: Kills some of your farm animals when there's too many to decrease lag. Mob spawners stop spawning if there are too many mobs around -- grinders must be cleared a lot.\n"
-	      + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/mustercull\n}|"
-	      + "   {|lItem Exchange{|r: It's a minecraft shop mod that enables different chests (and other inventory blocks) to perform an exchange of items with a player.\n"
-	      + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/itemxchng\n}|"
-	      + "   {|lHumbug:{|r Disables some features of minecraft -- see wiki for short list. Please read it to ensure you don't waste resources on a useless block.\n"
-	      + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/humbugwiki\n}|"
-	      + "   {|lFactory Mod{|r: Factories are hard to create but can mass produce goods for cheaper. Gives groups gear advantages over lone wolves. Trading may be cheaper than crafting due to this.\n"
-	      + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/factorymod\n}|"
-	      + "   {|lRealistic Biomes{|r: Biomes are huge, crops grow different in different biomes. Hit ground with seed to see growth rate. Farms need sunlight. Crops grow with nobody around.\n"
-	      + "{|lMore Info:{|r {|oWiki Page:{|r tinyurl.com/realbiome\n}|"
-	      + "   {|oFurther Info{|r\n"
-	      + "Visit our subreddit at: {|oreddit.com/r/civcraft{|r\n"
-	      + "Visit the unofficial wiki: {|oCivCraft.org{|r\n"
-	      + "Both have player made guides on other mods, towns, and general tips";
+        "    {|lWhat is CivCraft?{|r\n"
+        + "\"{|oCivcraft is an experiment for communities, political ideologies, debate and discussion.... where players can work together to create and shape civilization or to watch it crumble.{|r\"\n"
+        + "-ttk2, founder\n}|"
+
+        + "    {|lWhere am I?{|r\n"
+        + "Anyone who hasn't slept in a bed yet spawns at a random point in the world. You're most likely in the middle of nowhere.\n}|"
+
+        + "    {|lWhy are so few people in chat right now?{|r\n"
+        + "Your chat range is limited by distance. This range varies depending which shard you’re in but the default is 750 blocks.\n}|"
+
+        + "    {|lHow do I find people?{|r\n"
+        + "Your best bet is to respawn.\n"
+        + "You can also poke around on reddit.com/r/Civcraft for directions to a city. There are usually towns on there who are looking for new members.\n}|"
+
+        + "Or, why not grab a few friends and start a town of your own? No one's stopping you.\n"
+        + "Although if you're patient, maybe you want to find a road and, well, just see where it takes you.\n}|"
+
+        + "    {|lAre you an admin?{|r\n\n"
+        + "No.\n\n"
+        + "Editor’s Note: Editor is an admin.\n}|"
+
+        + "    {|lHow do I play?{|r\n"
+        + "Civcraft is a Minecraft survival server in which players are more-or-less free to do whatever they want. Building, stealing, fighting, killing, and griefing are all fair game.\n}|"
+        
+        + "Moderators only get involved when someone has cheated, hacked, exploited a glitch, or harassed another player in real life.\n}|"
+
+        + "In Civcraft, power lies with the players, not the moderators.\n}|"
+
+        + "To give players this power and to expand some on Minecraft’s base feature set, the following modifications on the original Minecraft are run on Civcraft.\n}|"
+
+        + "    {|lPrison Pearl{|r\n"
+        + "This mod lets players imprison (and effectively ban) each other. To imprison someone with Prison Pearl simply kill them while an ender pearl is in your hotbar.\n}|"
+
+        + "    {|lCitadel:{|r\n"
+        + "This mod allows players to place 'reinforced' blocks that are more difficult to break than non-reinforced blocks. To make a basic reinforcement, type '/ctr' into chat and then punch the target block with stone.\n}|"
+
+        + "    {|lBastion:{|r\n"
+        + "'Bastion' blocks prohibit nearby players from placing blocks, emptying buckets and throwing ender pearls. In practice they are much less common than reinforcements for their expense and specialized nature.\n}|"
+
+        + "    {|lJuke Alert:{|r\n"
+        + "Jukeboxes and noteblocks are Civcraft's security cameras. By simply reinforcing a jukebox or noteblock you turn it into a 'snitch' that keeps you updated on what happens around it.\n}|"
+
+        + "    {|lPylon:{|r\n"
+        + "The Pylon mod disables standard Minecraft experience-gathering and enchantment. All enchanted materials on Civcraft come from 'Pylons' which are rare and difficult to build.\n}|"
+
+        + "For a full list of mods and what they do, visit our wiki at wiki.civcraft.co. To see all chat commands, type '/help' into chat.\n}|"
+
+        + "    {|lSo...what now?{|r\n\n"
+        + "What now? You tell me.\n}|"
+
+        + "    {|lBe a builder.{|r\n"
+        + "Build a house, build a village, build a store, build a castle, build an island, build a mountain. You can build an island in the sky and then build a city on top of it, but that's already been done though.\n}|"
+
+        + "    {|lBe a griefer.{|r\n"
+        + "Grief a house, loot a village, bomb a city, start a gang, kill the mayor.\n}|"
+        
+        + "Mine out a bunch of diamonds and a bunch of obsidian and throw it all over a chest at the bottom of the world and then put as many people in the chest as possible. Why not?\n}|"
+
+        + "Destroy the world. That's already been done twice. Once on purpose.\n}|"
+
+        + "What happens now is up to you.\n\n"
+        + "Author: {|ocommando_wins{|r\n\n"
+        + "Editor: {|oIntellectualHobo{|r";
+
   private static final Iterable<String> compiled_book_text_ =
       Splitter.on("}|").split(book_text_.replaceAll("\\{\\|", "\u00A7"));
 
