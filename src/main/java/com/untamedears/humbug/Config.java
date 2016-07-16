@@ -45,7 +45,7 @@ public class Config {
         + "Anyone who hasn't slept in a bed yet spawns at a random point in the world. You're most likely in the middle of nowhere.\n}|"
 
         + "    {|lWhy are so few people in chat right now?{|r\n"
-        + "Your chat range is limited by distance. This range varies depending which shard you’re in but the default is 750 blocks.\n}|"
+        + "Your chat range is limited by distance. This range varies depending which shard you're in but the default is 750 blocks.\n}|"
 
         + "    {|lHow do I find people?{|r\n"
         + "Your best bet is to respawn.\n"
@@ -56,16 +56,16 @@ public class Config {
 
         + "    {|lAre you an admin?{|r\n\n"
         + "No.\n\n"
-        + "Editor’s Note: Editor is an admin.\n}|"
+        + "Editor's Note: Editor is an admin.\n}|"
 
         + "    {|lHow do I play?{|r\n"
         + "Civcraft is a Minecraft survival server in which players are more-or-less free to do whatever they want. Building, stealing, fighting, killing, and griefing are all fair game.\n}|"
-        
+
         + "Moderators only get involved when someone has cheated, hacked, exploited a glitch, or harassed another player in real life.\n}|"
 
         + "In Civcraft, power lies with the players, not the moderators.\n}|"
 
-        + "To give players this power and to expand some on Minecraft’s base feature set, the following modifications on the original Minecraft are run on Civcraft.\n}|"
+        + "To give players this power and to expand some on Minecraft's base feature set, the following modifications on the original Minecraft are run on Civcraft.\n}|"
 
         + "    {|lPrison Pearl{|r\n"
         + "This mod lets players imprison (and effectively ban) each other. To imprison someone with Prison Pearl simply kill them while an ender pearl is in your hotbar.\n}|"
@@ -92,7 +92,7 @@ public class Config {
 
         + "    {|lBe a griefer.{|r\n"
         + "Grief a house, loot a village, bomb a city, start a gang, kill the mayor.\n}|"
-        
+
         + "Mine out a bunch of diamonds and a bunch of obsidian and throw it all over a chest at the bottom of the world and then put as many people in the chest as possible. Why not?\n}|"
 
         + "Destroy the world. That's already been done twice. Once on purpose.\n}|"
