@@ -1,10 +1,9 @@
 package com.untamedears.humbug;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,13 +14,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import net.minecraft.server.v1_10_R1.EntityEnderPearl;
-import net.minecraft.server.v1_10_R1.EntityTypes;
-import net.minecraft.server.v1_10_R1.Item;
-import net.minecraft.server.v1_10_R1.ItemEnderPearl;
-import net.minecraft.server.v1_10_R1.MinecraftKey;
-import net.minecraft.server.v1_10_R1.RegistryID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,15 +26,14 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.Sign;
 import org.bukkit.block.Hopper;
+import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Boat;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -74,27 +65,21 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.ExpBottleEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.entity.SheepDyeWoolEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
+import org.bukkit.event.entity.ExpBottleEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.SheepDyeWoolEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -110,22 +95,17 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.FurnaceRecipe;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
@@ -133,6 +113,11 @@ import com.untamedears.humbug.annotations.BahHumbug;
 import com.untamedears.humbug.annotations.BahHumbugs;
 import com.untamedears.humbug.annotations.ConfigOption;
 import com.untamedears.humbug.annotations.OptType;
+
+import net.minecraft.server.v1_10_R1.EntityTypes;
+import net.minecraft.server.v1_10_R1.Item;
+import net.minecraft.server.v1_10_R1.ItemEnderPearl;
+import net.minecraft.server.v1_10_R1.MinecraftKey;
 
 public class Humbug extends JavaPlugin implements Listener {
   public static void severe(String message) {
@@ -2371,6 +2356,23 @@ public class Humbug extends JavaPlugin implements Listener {
   public void fixSpreadInUnloadedChunks(BlockSpreadEvent e) {
 	  if (!e.getBlock().getChunk().isLoaded()) {
 		  e.setCancelled(true);
+	  }
+  }
+  
+  List<Material> axes = Arrays.asList(new Material[]{Material.DIAMOND_AXE, Material.GOLD_AXE, 
+			Material.STONE_AXE, Material.IRON_AXE, Material.WOOD_AXE});
+  @BahHumbug(opt="axe_dmg_mult", type=OptType.Double, def="1.0")
+  @EventHandler
+  public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+	  double axeNerf = config_.get("axe_dmg_mult").getDouble();
+	  if(axeNerf == 1.0D) return;
+	  if(event.getDamager() instanceof Player) {
+		  Player player = (Player) event.getDamager();
+		  if(player.getInventory().getItemInMainHand() != null) {
+			  if(axes.contains(player.getInventory().getItemInMainHand().getType())) {
+				  event.setDamage(event.getDamage() * axeNerf);
+			  }
+		  }
 	  }
   }
 
