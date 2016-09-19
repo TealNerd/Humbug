@@ -2131,13 +2131,16 @@ public class Humbug extends JavaPlugin implements Listener {
     if (!(vehicle instanceof Horse)) {
       return;
     }
-    Versioned.setHorseSpeed((Entity)vehicle, config_.get("horse_speed").getDouble());
+    double horseSpeed = config_.get("horse_speed").getDouble();
+    if (horseSpeed < 0.0001) return;
+    
+    Versioned.setHorseSpeed((Entity)vehicle, horseSpeed);
   }
 
   // ================================================
   // Admins can view player inventories
 
-  @SuppressWarnings("deprecation")
+  /* @SuppressWarnings("deprecation")
   public void onInvseeCommand(Player admin, String playerName) {
     final Player player = Bukkit.getPlayerExact(playerName);
     if (player == null) {
@@ -2153,7 +2156,7 @@ public class Humbug extends JavaPlugin implements Listener {
     }
     admin.openInventory(inv);
     admin.updateInventory();
-  }
+  }*/
 
   // ================================================
   // Fix boats
@@ -2841,14 +2844,14 @@ public class Humbug extends JavaPlugin implements Listener {
       Command command,
       String label,
       String[] args) {
-    if (sender instanceof Player && command.getName().equals("invsee")) {
+    /*if (sender instanceof Player && command.getName().equals("invsee")) {
       if (args.length < 1) {
         sender.sendMessage("Provide a name");
         return false;
       }
       onInvseeCommand((Player)sender, args[0]);
       return true;
-    }
+    }*/
     if (sender instanceof Player
         && command.getName().equals("introbook")) {
       if (!config_.get("drop_newbie_book").getBool()) {
