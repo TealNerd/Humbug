@@ -540,7 +540,7 @@ public class Humbug extends JavaPlugin implements Listener {
       Block block = e.getClickedBlock();
       if(block.getData() > 0)
       {
-        block.setData((byte)(block.getData()+1));
+        block.setData( (byte) ( (block.getData()+1) % 4) );
       }
     }
   }
