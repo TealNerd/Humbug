@@ -23,10 +23,6 @@ commands:
     description: Creates a holiday package
     usage: /bahhumbug
     permission: humbug.admin.bahhumbug
-  invsee:
-    description: Allows admins to look into Player Inventories.
-    usage: /invsee <player>
-    permission: humbug.admin.invsee
 permissions:
   humbug.console:
     description: Console commands for Humbug
@@ -38,7 +34,6 @@ permissions:
       humbug.admin.introkit: true
       humbug.admin.introbook: true
       humbug.admin.bahhumbug: true
-      humbug.admin.invsee: true
   humbug.admin.introkit:
     description: Access to the /introkit command
     default: false
