@@ -8,11 +8,11 @@
 	<packaging>jar</packaging>
 	<version>1.9.1</version>
 	<name>Humbug</name>
-	<url>https://github.com/Civcraft/Humbug</url>
+	<url>https://github.com/DevotedMC/Humbug</url>
 
 	<properties>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
 
@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot</artifactId>
-			<version>1.10</version>
+			<version>1.10.2-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -69,7 +69,7 @@
 	<repositories>
 		<repository>
 			<id>Jenkins-repo</id>
-			<url>http://build.civcraft.co:8080/plugin/repository/everything/</url>
+			<url>https://build.devotedmc.com/plugin/repository/everything/</url>
 		</repository>
 		<repository>
 			<id>CombatTagPlus Repo</id>
