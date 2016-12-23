@@ -35,12 +35,12 @@ scale_protection_enchant: true
 player_max_health: 20
 fix_rail_dup_bug: true
 tag_on_join: true
-drop_newbie_kit: true
-drop_newbie_book: true
-disallow_record_playing: true
+drop_newbie_kit: false
+drop_newbie_book: false
+disallow_record_playing: false
 allow_water_in_nether: true
 indestructible_end_portals: true
-drop_ores_as_ore: true
+drop_ores_as_ore: false
 obsidian_generator: false
 nerf_strength: true
 strength_multiplier: 3
